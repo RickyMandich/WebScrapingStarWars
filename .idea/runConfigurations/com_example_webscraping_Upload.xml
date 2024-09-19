@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Carta" type="Application" factoryName="Application" nameIsGenerated="true">
-    <option name="MAIN_CLASS_NAME" value="com.example.webscraping.Carta" />
-    <module name="WebScraping" />
+  <configuration default="false" name="com.example.webscraping.Upload" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.example.webscraping.Upload" />
+    <module name="WebScrapingStarWars" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="com.example.webscraping.*" />

@@ -1,6 +1,7 @@
 package com.example.webscraping;
 
-import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -8,63 +9,63 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import javax.swing.*;
 import java.util.List;
-import java.util.Objects;
+
+import static org.apache.commons.lang3.StringUtils.join;
 
 public class Carta{
-    boolean unica;                          // fatto
-    String nome;                            // fatto
-    String titolo;                          // fatto
-    String espansione;                      // fatto
-    int numero;                             // fatto
-    String aspettoPrimario;                 // fatto
-    String aspettoSecondario;               // fatto
-    String tipo;                            // fatto
-    String[] tratti;                        // fatto
-    boolean imboscata;                      // todo
-    boolean tenacia;                        // todo
-    boolean sopraffazione;                  // todo
-    boolean sabotatore;                     // todo
-    boolean sentinella;                     // todo
-    boolean schermata;                      // todo
-    boolean incursione;                     // todo
-    int valoreIncursione;                   // todo
-    boolean recupero;                       // todo
-    int valoreRecupero;                     // todo
-    boolean contrabbando;                   // todo
-    String valoreContrabbando;              // todo
-    boolean quandoGiocata;                  // fatto
-    String valoreQuandoGiocata;             // fatto
-    boolean taglia;                         // todo
-    String valoreTaglia;                    // todo
-    boolean quandoSconfitta;                // todo
-    String valoreQuandoSconfitta;           // todo
-    boolean quandoAttacca;                  // fatto
-    String valoreQuandoAttacca;             // fatto
-    boolean descrizioneEvento;              // fatto
-    String valoreDescrizioneEvento;         // fatto
-    boolean azione;                         // fatto
-    String valoreAzione;                    // fatto
-    String arena;                           // fatto
-    int costo;                              // fatto
-    int vita;                               // fatto
-    int potenza;                            // fatto
-    String rarita;                          // fatto
-    double prezzo;                          // fatto
-    String artista;                         // fatto
+    boolean unica;
+    String nome = "";
+    String titolo = "";
+    String espansione = "";
+    int numero;
+    String aspettoPrimario = "";
+    String aspettoSecondario = "";
+    String tipo = "";
+    String[] tratti;
+    boolean imboscata;
+    boolean tenacia;
+    boolean sopraffazione;
+    boolean sabotatore;
+    boolean sentinella;
+    boolean schermata;
+    boolean incursione;
+    int valoreIncursione;
+    boolean recupero;
+    int valoreRecupero;
+    boolean contrabbando;
+    String valoreContrabbando = "";
+    boolean quandoGiocata;
+    String valoreQuandoGiocata = "";
+    boolean taglia;
+    String valoreTaglia = "";
+    boolean quandoSconfitta;
+    String valoreQuandoSconfitta = "";
+    boolean quandoAttacca;
+    String valoreQuandoAttacca = "";
+    boolean descrizioneEvento;
+    String valoreDescrizioneEvento = "";
+    boolean azione;
+    String valoreAzione = "";
+    String arena = "";
+    int costo;
+    int vita;
+    int potenza;
+    String rarita = "";
+    double prezzo;
+    String artista = "";
 
     Carta(WebDriver driver){
-        nome = driver.findElement(By.className("col")).findElement(By.tagName("h4")).getText();
+        nome = removeSlash(driver.findElement(By.className("col")).findElement(By.tagName("h4")));
         unica = nome.startsWith("⟡ ");
         nome = nome.substring(unica ? 2 : 0);
         try{
-            titolo = driver.findElement(By.className("card-title")).getText();
+            titolo = removeSlash(driver.findElement(By.className("card-title")));
         }catch (NoSuchElementException e){
             titolo = "";
         }
-        espansione = StringUtils.substringBetween(driver.findElement(By.className("card-expansion-name")).getText(), "(", ")");
-        numero = Integer.parseInt(StringUtils.substringBetween(driver.findElement(By.className("card-expansion-header")).findElement(By.tagName("span")).getText(), "#", "•").replace(" ", ""));
+        espansione = StringUtils.substringBetween(removeSlash(driver.findElement(By.className("card-expansion-name"))), "(", ")");
+        numero = Integer.parseInt(StringUtils.substringBetween(removeSlash(driver.findElement(By.className("card-expansion-header")).findElement(By.tagName("span"))), "#", "•").replace(" ", ""));
         List<WebElement> aspetti = driver.findElements(By.className("card-stats-aspect"));
         boolean primoAspetto = true;
         for(WebElement aspect : aspetti){
@@ -113,63 +114,188 @@ public class Carta{
                     }else aspettoSecondario = aspetto;
             }
         }
-        tipo = driver.findElement(By.cssSelector(".col-3.d-flex.align-items-center.justify-content-center span")).getText();
+        tipo = removeSlash(driver.findElement(By.cssSelector(".col-3.d-flex.align-items-center.justify-content-center span")));
         List<WebElement> trait = driver.findElement(By.className("card-trait-text")).findElements(By.tagName("a"));
         tratti = new String[0];
         for(WebElement t:trait){
-            tratti = add(tratti, t.getText());
+            tratti = add(tratti, removeSlash(t));
         }
         List<WebElement> ability = driver.findElements(By.className("card-ability-text"));
         for(WebElement a:ability){
             System.out.println("sono dentro il for each di a");
             List<WebElement> abilita = a.findElements(By.tagName("p"));
-            for(WebElement p:abilita){
-                System.out.println("sono dentro il for each di p");
-                String stringCondizioneAbilita = "";
-                try{
-                    System.out.println("sono nel try di strong");
-                    WebElement condizioneAbilita = p.findElement(By.tagName("strong"));
-                    stringCondizioneAbilita = condizioneAbilita.getText();
-                    try{
-                        System.out.println("sono nel try di i");
-                        stringCondizioneAbilita = stringCondizioneAbilita.replace(" [" + condizioneAbilita.findElement(By.tagName("i")).getText() + "]", "");
-                    }catch (NoSuchElementException e){
-                        System.out.println("i non trovato");
+            for(WebElement p:abilita) {
+                if(removeSlash(p).matches("^Action.*?")){
+                    azione = true;
+                    valoreAzione = String.valueOf(removeSlash(p).charAt(11));
+                    List<WebElement> aspettiAzione = p.findElements(By.tagName("img"));
+                    for(WebElement aspetto:aspettiAzione){
+                        switch (aspetto.getAttribute("alt").toLowerCase()){
+                            case "vigilance aspect":
+                                valoreAzione = valoreAzione.concat("B");
+                            break;
+                            case "command aspect":
+                                valoreAzione = valoreAzione.concat("G");
+                            break;
+                            case "aggression aspect":
+                                valoreAzione = valoreAzione.concat("R");
+                            break;
+                            case "cunning aspect":
+                                valoreAzione = valoreAzione.concat("Y");
+                            break;
+                            case "heroism aspect":
+                                valoreAzione = valoreAzione.concat("H");
+                            break;
+                            case "villainy aspect":
+                                valoreAzione = valoreAzione.concat("D");
+                            break;
+                        }
                     }
-                }catch (NoSuchElementException e){
-                    System.out.println("strong non trovato");
-                }
-                System.out.println(stringCondizioneAbilita);
-                String[] condizioni = stringCondizioneAbilita.replace(":", "").split("/");
-                for(String condition:condizioni) {
-                    switch (condition) {
-                        case "Action":
-                            azione = true;
-                            valoreAzione = p.getText().replace(p.findElement(By.tagName("strong")).getText(), "");
-                            break;
-                        case "On Attack":
-                            quandoAttacca = true;
-                            valoreQuandoAttacca = p.getText().replace(p.findElement(By.tagName("strong")).getText(), "");
-                            break;
-                        case "When Played":
-                            quandoGiocata = true;
-                            valoreQuandoAttacca = p.getText().replace(p.findElement(By.tagName("strong")).getText(), "");
-                            break;
-                        default:
-                            descrizioneEvento = true;
-                            valoreDescrizioneEvento = p.getText();
-                            break;
+                    valoreAzione = valoreAzione.concat(removeSlash(p).substring(removeSlash(p).indexOf(":")+1));
+                } else if(removeSlash(p).matches("^On Attack.*?")){
+                    quandoAttacca = true;
+                    valoreQuandoAttacca = removeSlash(p).substring(removeSlash(p).indexOf(":") + 1);
+                } else if(removeSlash(p).matches("^When Played.*?")){
+                    quandoGiocata = true;
+                    valoreQuandoGiocata = removeSlash(p).substring(removeSlash(p).indexOf(":"));
+                } else if(removeSlash(p).matches("^When Defeated.*?")){
+                    quandoSconfitta = true;
+                    valoreQuandoSconfitta = removeSlash(p).substring(removeSlash(p).indexOf(":"));
+                } else if(removeSlash(p).matches("^When you play an [A-z]* card:.*")){
+                    if(quandoGiocata){
+                        valoreQuandoGiocata = valoreQuandoGiocata.concat(" * " + removeSlash(p));
+                    } else{
+                        quandoGiocata = true;
+                        valoreQuandoGiocata = removeSlash(p);
                     }
-                }
+                } else if(removeSlash(p).toUpperCase().matches("^grit.*?".toUpperCase())){
+                    tenacia = true;
+                } else if(removeSlash(p).toUpperCase().matches("^ambush.*?".toUpperCase())){
+                    imboscata = true;
+                } else if(removeSlash(p).toUpperCase().matches("^overwhelm.*?".toUpperCase())){
+                    sopraffazione = true;
+                } else if(removeSlash(p).toUpperCase().matches("^saboteur.*?".toUpperCase())){
+                    sabotatore = true;
+                } else if(removeSlash(p).toUpperCase().matches("^sentinel.*?".toUpperCase())){
+                    sentinella = true;
+                } else if(removeSlash(p).toUpperCase().matches("^shielded.*?".toUpperCase())){
+                    schermata = true;
+                } else if(removeSlash(p).toUpperCase().matches("^raid [0-9].*?".toUpperCase())){
+                    incursione = true;
+                    System.out.println(removeSlash(p));
+                    valoreIncursione = Integer.parseInt(String.valueOf(removeSlash(p).charAt(5)));
+                } else if(removeSlash(p).toUpperCase().matches("^restore [0-9].*?".toUpperCase())){
+                    recupero = true;
+                    System.out.println(removeSlash(p));
+                    valoreRecupero = Integer.parseInt(String.valueOf(removeSlash(p).charAt(8)));
+                } else if(removeSlash(p).toUpperCase().matches("^bounty.*?".toUpperCase())){
+                    taglia = true;
+                    valoreTaglia = removeSlash(p).substring(removeSlash(p).indexOf(" - ") + 1).replace("- ", "");
+                } else if(removeSlash(p).toUpperCase().matches("^smuggle.*?".toUpperCase())){
+                    contrabbando = true;
+                    valoreContrabbando = String.valueOf(removeSlash(p).charAt(11));
+                    List<WebElement> aspettiContrabbando = p.findElements(By.tagName("img"));
+                    for(WebElement aspetto:aspettiContrabbando){
+                        switch (aspetto.getAttribute("alt").toLowerCase()){
+                            case "vigilance aspect":
+                                valoreContrabbando = valoreContrabbando.concat("B");
+                            break;
+                            case "command aspect":
+                                valoreContrabbando = valoreContrabbando.concat("G");
+                            break;
+                            case "aggression aspect":
+                                valoreContrabbando = valoreContrabbando.concat("R");
+                            break;
+                            case "cunning aspect":
+                                valoreContrabbando = valoreContrabbando.concat("Y");
+                            break;
+                            case "heroism aspect":
+                                valoreContrabbando = valoreContrabbando.concat("H");
+                            break;
+                            case "villainy aspect":
+                                valoreContrabbando = valoreContrabbando.concat("D");
+                            break;
+                        }
+                    }
+                } else{
+                    if(!removeSlash(p).toLowerCase().contains("epic")){
+                        if(descrizioneEvento) valoreDescrizioneEvento = valoreDescrizioneEvento.concat(" * ");
+                        descrizioneEvento = true;
+                        valoreDescrizioneEvento = valoreDescrizioneEvento.concat(removeSlash(p));
+                    }
+                }/**/
             }
         }
-        arena = driver.findElement(By.cssSelector(".card-stats-arena-box>span")).getText();
-        costo = Integer.parseInt(driver.findElement(By.cssSelector("div.card-info-box>div.row.card-stats-row>div.col-3.card-resources.d-flex.align-items-center.justify-content-center")).getText());
-        vita = Integer.parseInt(driver.findElement(By.className("card-hp")).getText());
-        potenza = Integer.parseInt(driver.findElement(By.className("card-power")).getText());
-        rarita = driver.findElement(By.cssSelector(".card-expansion-header span")).getText().split(" • ")[1];
-        prezzo = Double.parseDouble(driver.findElement(By.cssSelector(".container>.row.mt-1>.col.px-0>a[href*=\"tcgplayer.com\"]")).getText().split("\\$")[1]);
-        artista = driver.findElement(By.cssSelector(".card-stats-artist>a")).getText();
+        try{
+            arena = removeSlash(driver.findElement(By.cssSelector(".card-stats-arena-box>span")));
+        }catch (NoSuchElementException e){
+            arena = "";
+        }
+        try{
+            costo = Integer.parseInt(removeSlash(driver.findElement(By.cssSelector("div.card-info-box>div.row.card-stats-row>div.col-3.card-resources.d-flex.align-items-center.justify-content-center"))));
+        }catch (NoSuchElementException|NumberFormatException e){
+            costo = 0;
+        }
+        try{
+            vita = Integer.parseInt(removeSlash(driver.findElement(By.className("card-hp"))));
+        }catch (NoSuchElementException|NumberFormatException e){
+            vita = 0;
+        }
+        try{
+            potenza = Integer.parseInt(removeSlash(driver.findElement(By.className("card-power"))));
+        }catch (NoSuchElementException|NumberFormatException ignored){}
+        rarita = removeSlash(driver.findElement(By.cssSelector(".card-expansion-header span"))).split(" • ")[1];
+        List<WebElement> prezzi = driver.findElements(By.cssSelector(".container>.row.mt-1>.col.px-0>a"));
+        for(WebElement p:prezzi){
+            try{
+                prezzo = Double.parseDouble(removeSlash(p).split("\\$")[1]);
+            }catch (ArrayIndexOutOfBoundsException ignore){}
+        }
+        artista = removeSlash(driver.findElement(By.cssSelector(".card-stats-artist>a")));
+    }
+
+    public Carta(String jsonString) {
+        JsonObject jsonObject = new Gson().fromJson(jsonString, JsonObject.class);
+        this.unica = jsonObject.get("unica").getAsBoolean();
+        this.nome = jsonObject.get("nome").getAsString();
+        this.titolo = jsonObject.get("titolo").getAsString();
+        this.espansione = jsonObject.get("espansione").getAsString();
+        this.numero = jsonObject.get("numero").getAsInt();
+        this.aspettoPrimario = jsonObject.get("aspettoPrimario").getAsString();
+        this.aspettoSecondario = jsonObject.get("aspettoSecondario").getAsString();
+        this.tipo = jsonObject.get("tipo").getAsString();
+        this.tratti = new Gson().fromJson(jsonObject.get("tratti"), String[].class);
+        this.imboscata = jsonObject.get("imboscata").getAsBoolean();
+        this.tenacia = jsonObject.get("tenacia").getAsBoolean();
+        this.sopraffazione = jsonObject.get("sopraffazione").getAsBoolean();
+        this.sabotatore = jsonObject.get("sabotatore").getAsBoolean();
+        this.sentinella = jsonObject.get("sentinella").getAsBoolean();
+        this.schermata = jsonObject.get("schermata").getAsBoolean();
+        this.incursione = jsonObject.get("incursione").getAsBoolean();
+        this.valoreIncursione = jsonObject.get("valoreIncursione").getAsInt();
+        this.recupero = jsonObject.get("recupero").getAsBoolean();
+        this.valoreRecupero = jsonObject.get("valoreRecupero").getAsInt();
+        this.contrabbando = jsonObject.get("contrabbando").getAsBoolean();
+        this.valoreContrabbando = jsonObject.get("valoreContrabbando").getAsString();
+        this.quandoGiocata = jsonObject.get("quandoGiocata").getAsBoolean();
+        this.valoreQuandoGiocata = jsonObject.get("valoreQuandoGiocata").getAsString();
+        this.taglia = jsonObject.get("taglia").getAsBoolean();
+        this.valoreTaglia = jsonObject.get("valoreTaglia").getAsString();
+        this.quandoSconfitta = jsonObject.get("quandoSconfitta").getAsBoolean();
+        this.valoreQuandoSconfitta = jsonObject.get("valoreQuandoSconfitta").getAsString();
+        this.quandoAttacca = jsonObject.get("quandoAttacca").getAsBoolean();
+        this.valoreQuandoAttacca = jsonObject.get("valoreQuandoAttacca").getAsString();
+        this.descrizioneEvento = jsonObject.get("descrizioneEvento").getAsBoolean();
+        this.valoreDescrizioneEvento = jsonObject.get("valoreDescrizioneEvento").getAsString();
+        this.azione = jsonObject.get("azione").getAsBoolean();
+        this.valoreAzione = jsonObject.get("valoreAzione").getAsString();
+        this.arena = jsonObject.get("arena").getAsString();
+        this.costo = jsonObject.get("costo").getAsInt();
+        this.vita = jsonObject.get("vita").getAsInt();
+        this.potenza = jsonObject.get("potenza").getAsInt();
+        this.rarita = jsonObject.get("rarita").getAsString();
+        this.prezzo = jsonObject.get("prezzo").getAsDouble();
+        this.artista = jsonObject.get("artista").getAsString();
     }
 
     private String[] add(String[] oldArray, String newElement){
@@ -230,13 +356,79 @@ public class Carta{
         return info;
     }
 
+
+
     public static void main(String[] args){
         WebDriver driver = new ChromeDriver();
         try {
-            driver.get("https://swudb.com/card/sor/014/sabine-wren");
-            System.out.println(new Carta(driver));
+            driver.get("https://swudb.com/card/sor/054");
+            Carta c = new Carta(driver);
+            System.out.println(c);
+            System.out.println(new Gson().toJson(c));
+            System.out.println(c.insertSql());
         }finally {
             driver.quit();
         }
+    }
+
+    public String insertSql(){
+        String info = "insert into carte values(\"";
+        info = info.concat(espansione);
+        info = info.concat("\"," + numero);
+        info = info.concat(",\"" + nome);
+        switch (espansione.toUpperCase()){
+            case "SOR":
+                info = info.concat("\"," + "1");
+                break;
+            case "SHD":
+                info = info.concat("\"," + "2");
+                break;
+            case "TWI":
+                info = info.concat("\"," + "3");
+                break;
+        }
+        info = info.concat("," + unica);
+        info = info.concat(",\"" + titolo);
+        info = info.concat("\",\"" + aspettoPrimario);
+        info = info.concat("\",\"" + aspettoSecondario);
+        info = info.concat("\",\"" + tipo);
+        info = info.concat("\",\"" + join(tratti, " * "));
+        info = info.concat("\"," + (imboscata ? 1 : 0));
+        info = info.concat("," + (tenacia ? 1 : 0));
+        info = info.concat("," + (sopraffazione ? 1 : 0));
+        info = info.concat("," + (sabotatore ? 1 : 0));
+        info = info.concat("," + (sentinella ? 1 : 0));
+        info = info.concat("," + (schermata ? 1 : 0));
+        info = info.concat("," + (incursione ? 1 : 0));
+        info = info.concat("," + (recupero ? 1 : 0));
+        info = info.concat("," + (contrabbando ? 1 : 0));
+        info = info.concat("," + (quandoGiocata ? 1 : 0));
+        info = info.concat("," + (taglia ? 1 : 0));
+        info = info.concat("," + (quandoSconfitta ? 1 : 0));
+        info = info.concat("," + (quandoAttacca ? 1 : 0));
+        info = info.concat("," + (descrizioneEvento ? 1 : 0));
+        info = info.concat(",\"" + rarita);
+        info = info.concat("\"," + costo);
+        info = info.concat("," + vita);
+        info = info.concat("," + potenza);
+        info = info.concat("," + prezzo);
+        info = info.concat(",\"" + artista);
+        info = info.concat("\"," + valoreIncursione);
+        info = info.concat("," + valoreRecupero);
+        info = info.concat(",\"" + valoreContrabbando);
+        info = info.concat("\",\"" + valoreQuandoGiocata);
+        info = info.concat("\",\"" + valoreTaglia);
+        info = info.concat("\",\"" + valoreQuandoSconfitta);
+        info = info.concat("\",\"" + valoreQuandoAttacca);
+        info = info.concat("\",\"" + valoreDescrizioneEvento);
+        info = info.concat("\",\"" + arena);
+        info = info.concat("\"," + (azione ? 1 : 0));
+        info = info.concat(",\"" + valoreAzione);
+        info = info.concat("\");");
+        return info;
+    }
+
+    public String removeSlash(WebElement element){
+        return element.getText().replace("\"", "\\\"");
     }
 }
