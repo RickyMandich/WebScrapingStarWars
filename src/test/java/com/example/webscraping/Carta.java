@@ -9,7 +9,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.apache.commons.lang3.StringUtils.join;
 
@@ -18,6 +22,7 @@ public class Carta{
     String nome = "";
     String titolo = "";
     String espansione = "";
+    String uscita = "";
     int numero;
     String aspettoPrimario = "";
     String aspettoSecondario = "";
@@ -55,7 +60,9 @@ public class Carta{
     double prezzo;
     String artista = "";
 
-    Carta(WebDriver driver){
+    static Map<String, String> uscitaEspansioni = new HashMap<>();
+
+    public Carta(WebDriver driver){
         nome = removeSlash(driver.findElement(By.className("col")).findElement(By.tagName("h4")));
         unica = nome.startsWith("⟡ ");
         nome = nome.substring(unica ? 2 : 0);
@@ -65,8 +72,9 @@ public class Carta{
             titolo = "";
         }
         espansione = StringUtils.substringBetween(removeSlash(driver.findElement(By.className("card-expansion-name"))), "(", ")");
+        uscita = uscitaEspansioni.get(espansione);
         numero = Integer.parseInt(StringUtils.substringBetween(removeSlash(driver.findElement(By.className("card-expansion-header")).findElement(By.tagName("span"))), "#", "•").replace(" ", ""));
-        List<WebElement> aspetti = driver.findElements(By.className("card-stats-aspect"));
+        List<WebElement> aspetti = driver.findElements(By.cssSelector("div>.card-stats-aspect"));
         boolean primoAspetto = true;
         for(WebElement aspect : aspetti){
             String aspetto = aspect.getAttribute("alt").replace(" Aspect", "");
@@ -122,7 +130,6 @@ public class Carta{
         }
         List<WebElement> ability = driver.findElements(By.className("card-ability-text"));
         for(WebElement a:ability){
-            System.out.println("sono dentro il for each di a");
             List<WebElement> abilita = a.findElements(By.tagName("p"));
             for(WebElement p:abilita) {
                 if(removeSlash(p).matches("^Action.*?")){
@@ -193,7 +200,9 @@ public class Carta{
                     valoreTaglia = removeSlash(p).substring(removeSlash(p).indexOf(" - ") + 1).replace("- ", "");
                 } else if(removeSlash(p).toUpperCase().matches("^smuggle.*?".toUpperCase())){
                     contrabbando = true;
-                    valoreContrabbando = String.valueOf(removeSlash(p).charAt(11));
+                    Matcher m = Pattern.compile("R([0-9])}").matcher(removeSlash(p));
+                    m.find();
+                    valoreContrabbando = m.group(1);
                     List<WebElement> aspettiContrabbando = p.findElements(By.tagName("img"));
                     for(WebElement aspetto:aspettiContrabbando){
                         switch (aspetto.getAttribute("alt").toLowerCase()){
@@ -361,11 +370,19 @@ public class Carta{
     public static void main(String[] args){
         WebDriver driver = new ChromeDriver();
         try {
-            driver.get("https://swudb.com/card/sor/054");
+            System.out.println("inserisci l'espansione");
+            String espansione = new java.util.Scanner(System.in).nextLine();
+            System.out.println("inserisci il numero");
+            String numero = String.format("%03d", new java.util.Scanner(System.in).nextInt());
+            String link = "https://swudb.com/card/" + espansione + "/" + numero;
+            System.out.println("web scraping di " + link);
+            driver.get(link);
             Carta c = new Carta(driver);
             System.out.println(c);
             System.out.println(new Gson().toJson(c));
             System.out.println(c.insertSql());
+        }catch (Exception e){
+            System.out.println("c'è stato un errore, riprova");
         }finally {
             driver.quit();
         }
@@ -376,18 +393,8 @@ public class Carta{
         info = info.concat(espansione);
         info = info.concat("\"," + numero);
         info = info.concat(",\"" + nome);
-        switch (espansione.toUpperCase()){
-            case "SOR":
-                info = info.concat("\"," + "1");
-                break;
-            case "SHD":
-                info = info.concat("\"," + "2");
-                break;
-            case "TWI":
-                info = info.concat("\"," + "3");
-                break;
-        }
-        info = info.concat("," + unica);
+        info = info.concat("\",'" + uscita);
+        info = info.concat("'," + unica);
         info = info.concat(",\"" + titolo);
         info = info.concat("\",\"" + aspettoPrimario);
         info = info.concat("\",\"" + aspettoSecondario);
