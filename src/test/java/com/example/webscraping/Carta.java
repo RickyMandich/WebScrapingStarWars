@@ -189,11 +189,9 @@ public class Carta{
                     schermata = true;
                 } else if(removeSlash(p).toUpperCase().matches("^raid [0-9].*?".toUpperCase())){
                     incursione = true;
-                    System.out.println(removeSlash(p));
                     valoreIncursione = Integer.parseInt(String.valueOf(removeSlash(p).charAt(5)));
                 } else if(removeSlash(p).toUpperCase().matches("^restore [0-9].*?".toUpperCase())){
                     recupero = true;
-                    System.out.println(removeSlash(p));
                     valoreRecupero = Integer.parseInt(String.valueOf(removeSlash(p).charAt(8)));
                 } else if(removeSlash(p).toUpperCase().matches("^bounty.*?".toUpperCase())){
                     taglia = true;

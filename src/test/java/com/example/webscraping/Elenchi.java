@@ -1,11 +1,14 @@
 package com.example.webscraping;
 
-public class Elenchi extends java.lang.Thread {
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class Elenchi{
     String[] carte;
     Carta[] collezione;
     boolean semaforoCollezione = false;
     int i=0;
-    boolean finito = false;
+    Boolean finito = Boolean.FALSE;
     //thread che sono in esecuzione
     int thread;
 
@@ -40,6 +43,10 @@ public class Elenchi extends java.lang.Thread {
         collezione = Scan.add(collezione, c);
     }
 
+    public void add(String link){
+        carte = Scan.add(carte, link);
+    }
+
     public String progresso(){
         double puntoPercentuale = (double) carte.length /100;
         double percentuale = collezione.length / puntoPercentuale;
@@ -50,17 +57,15 @@ public class Elenchi extends java.lang.Thread {
         return collezione;
     }
 
+    public Boolean getFinito(){
+        return finito;
+    }
+
     public void hoFinito(){
         System.out.println("hoFinito prima di diminuire:" + thread);
         thread--;
         System.out.println("hoFinito dopo aver diminuito:" + thread);
-    }
-
-    @Override
-    public void run() {
-        while (!finito){
-            System.out.println(thread);
-            if(thread == 0) finito = true;
-        }
+        if(thread == 0) finito = Boolean.TRUE;
+        System.out.println("hoFinito finito:" + finito);
     }
 }

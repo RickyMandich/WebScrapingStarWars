@@ -1,24 +1,22 @@
 package com.example.webscraping;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import com.google.gson.Gson;
 
+import java.awt.*;
 import java.io.*;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Scan {
     static long tempo;
+    static boolean print = false;
 
     public static String[] add(String[] array, String line){
         String[] newArray = new String[array.length + 1];
@@ -34,14 +32,22 @@ public class Scan {
         return newArray;
     }
 
-    public static void main(String[] args) throws SQLException{
+    public static void main(String[] args){
         WebDriver driver = new ChromeDriver();
         tempo  = System.nanoTime() / 1000000;
         Carta[] collezione = new Carta[0];
         String[] espansioni = new String[0];
         String line;
+        int numeroThread = 0;
         try {
-            driver.get("https://swudb.com/sets/");
+            Exception exception = null;
+            do{
+                try{
+                    driver.get("https://swudb.com/sets/");
+                }catch (Exception ex){
+                    exception = ex;
+                }
+            }while(exception instanceof TimeoutException);
             List<WebElement> tabelle = driver.findElements(By.tagName("tbody"));
             List<WebElement> row = new ArrayList<>();
             for(WebElement table:tabelle){
@@ -66,9 +72,10 @@ public class Scan {
             }
             System.out.println("inserisci l'espansione da scansionare, se hai finito lascia vuoto");
             boolean inCorso = true;
-            while(inCorso && !(line = new java.util.Scanner(System.in).nextLine()).isEmpty()){
+            driver.quit();
+            while(inCorso && !(line = new Scanner(System.in).nextLine()).isEmpty()){
+                inCorso = false;
                 if(line.equalsIgnoreCase("all")){
-                    inCorso = false;
                     for(String set:Carta.uscitaEspansioni.keySet()){
                         espansioni = add(espansioni, set);
                     }
@@ -77,16 +84,23 @@ public class Scan {
                     for(String s: espansioni){
                         System.out.println(s);
                     }
+                }else if(line.equalsIgnoreCase("singolo 1")){
+                    espansioni = add(espansioni, "sorop");
+                }else if(line.equalsIgnoreCase("singolo 2")){
+                    espansioni = add(espansioni, "shdop");
+                }else if(line.equalsIgnoreCase("doppio")){
+                    espansioni = add(add(espansioni, "shdop"), "sorop");
                 }else {
+                    inCorso = true;
                     espansioni = add(espansioni, line);
                     System.out.println("inserisci l'espansione da scansionare, se hai finito lascia vuoto");
                 }
             }
-
+            driver = new ChromeDriver();
             String[] carte = new String[0];
             for(String set:espansioni){
                 System.out.println("ora scansiono " + set);
-                java.awt.Toolkit.getDefaultToolkit().beep();
+                Toolkit.getDefaultToolkit().beep();
                 driver.get("https://swudb.com/sets/" + set);
                 List<WebElement> elements = driver.findElements(By.className("col-6"));
                 //String[] carte = new String[5];
@@ -103,16 +117,18 @@ public class Scan {
             }
             driver.quit();
             System.out.println("inserisci il numero di thread che vuoi lanciare");
-            int numeroThread = new Scanner(System.in).nextInt();
+            numeroThread = new Scanner(System.in).nextInt();
             Elenchi elenco = new Elenchi(carte, numeroThread);
             Thread[] processi = new Thread[numeroThread];
-            for(Thread t:processi){
-                t = new Thread(elenco, new ChromeDriver());
-                t.start();
+            for (int i = 0; i < processi.length; i++) {
+                processi[i] = new Thread(elenco, new ChromeDriver());
+                processi[i].start();
             }
-            elenco.start();
-            while(!elenco.finito){
+            while(!elenco.getFinito()){
+                print = elenco.getFinito();
+                if(print) System.out.println(elenco.getFinito());
             }
+            System.out.println("-----------------fine thread-----------------");
             collezione = elenco.getResult();
         } finally {
             System.out.println("-------------------finally--------------------------");
@@ -127,12 +143,11 @@ public class Scan {
                 while( (line = reader.readLine()) != null){
                     fileTempo = fileTempo.concat(line + "\n");
                 }
-            } catch (IOException ignore) {
-            }
+            } catch (IOException ignore) {}
             try(FileWriter writer = new FileWriter("tempo.txt")){
-                writer.write(fileTempo + formattaSecondi(secondi) + "\n");
+                writer.write(fileTempo + new SimpleDateFormat("yyyy MM dd HH:mm:ss").format(new Date()) + "\tthread: " + numeroThread + "\t" + formattaSecondi(secondi) + "\n");
             }catch (IOException ignore){}
-            java.awt.Toolkit.getDefaultToolkit().beep();
+            Toolkit.getDefaultToolkit().beep();
             String json = json(collezione);
             System.out.println(json);
             try(FileWriter writer = new FileWriter("collezione.json")){
@@ -179,7 +194,6 @@ public class Scan {
                 case "October" -> mese = "10";
                 case "November" -> mese = "11";
                 case "December" -> mese = "12";
-                default -> mese = mese;
             }
             data = anno + " " + mese + " " + giorno;
         }
@@ -256,7 +270,6 @@ public class Scan {
         try(FileWriter writer = new FileWriter(getString("inserisci il percorso del file in cui salvare il json"))){
             writer.write(json);
         }catch (IOException e){
-            e.printStackTrace();
             System.out.println("errore nella scrittura del file");
             scrivi(json);
         }
@@ -276,7 +289,7 @@ public class Scan {
 
     public static String getString(String message){
         System.out.println(message);
-        java.awt.Toolkit.getDefaultToolkit().beep();
-        return "s";
+        Toolkit.getDefaultToolkit().beep();
+        return getString();
     }
 }
