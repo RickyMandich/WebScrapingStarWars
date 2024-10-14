@@ -21,14 +21,9 @@ public class Thread extends java.lang.Thread {
                 long tempoTrascorso = System.nanoTime() / 1000000;
                 tempoTrascorso = tempoTrascorso - Scan.tempo;
                 long secondi = tempoTrascorso / 1000;
-                System.out.println("tempo trascorso:\t" + Scan.formattaSecondi(secondi));
-            } catch (org.openqa.selenium.TimeoutException e) {
-                link.add(line);
+                System.out.println("tempo trascorso:\t" + Scan.formattaSecondi(secondi) + link.tempoStimato(secondi));
             }catch (Exception e) {
-                System.out.println("------------------------------------------------------diminuisco thread di uno");
-                link.hoFinito();
-                driver.quit();
-                throw e;
+                link.add(line);
             }
         }
         System.out.println("------------------------------------------------------diminuisco thread di uno");

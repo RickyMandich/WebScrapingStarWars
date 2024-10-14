@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 
 public class Scan {
     static long tempo;
-    static boolean print = false;
 
     public static String[] add(String[] array, String line){
         String[] newArray = new String[array.length + 1];
@@ -101,7 +100,11 @@ public class Scan {
             for(String set:espansioni){
                 System.out.println("ora scansiono " + set);
                 Toolkit.getDefaultToolkit().beep();
-                driver.get("https://swudb.com/sets/" + set);
+                try{
+                    driver.get("https://swudb.com/sets/" + set);
+                } catch (Exception e) {
+                    espansioni = add(espansioni, set);
+                }
                 List<WebElement> elements = driver.findElements(By.className("col-6"));
                 //String[] carte = new String[5];
                 for (WebElement e : elements) {
@@ -116,17 +119,22 @@ public class Scan {
                 System.out.println(e);
             }
             driver.quit();
-            System.out.println("inserisci il numero di thread che vuoi lanciare");
-            numeroThread = new Scanner(System.in).nextInt();
+            numeroThread = 2;                                                //new Scanner(System.in).nextInt();
+            tempo  = System.nanoTime() / 1000000;
             Elenchi elenco = new Elenchi(carte, numeroThread);
             Thread[] processi = new Thread[numeroThread];
             for (int i = 0; i < processi.length; i++) {
                 processi[i] = new Thread(elenco, new ChromeDriver());
                 processi[i].start();
             }
-            while(!elenco.getFinito()){
-                print = elenco.getFinito();
-                if(print) System.out.println(elenco.getFinito());
+            boolean fine = false;
+            while(!fine){
+                fine = true;
+                for(Thread t : processi){
+                    if(t.isAlive()){
+                        fine = false;
+                    }
+                }
             }
             System.out.println("-----------------fine thread-----------------");
             collezione = elenco.getResult();
@@ -145,11 +153,10 @@ public class Scan {
                 }
             } catch (IOException ignore) {}
             try(FileWriter writer = new FileWriter("tempo.txt")){
-                writer.write(fileTempo + new SimpleDateFormat("yyyy MM dd HH:mm:ss").format(new Date()) + "\tthread: " + numeroThread + "\t" + formattaSecondi(secondi) + "\n");
+                writer.write(fileTempo + new SimpleDateFormat("yyyy MM dd HH:mm:ss").format(new Date()) + "\tthread: " + numeroThread + "\t" + formattaSecondi(secondi) + "\tset:\t" + join(espansioni, " - ") + "\n");
             }catch (IOException ignore){}
             Toolkit.getDefaultToolkit().beep();
             String json = json(collezione);
-            System.out.println(json);
             try(FileWriter writer = new FileWriter("collezione.json")){
                 writer.write(json);
             }catch (IOException e){
@@ -158,6 +165,15 @@ public class Scan {
             }
         }
         //Upload.main(new String[0]);
+    }
+
+    public static String join(String[] array, String concatenatore){
+        String ret = array[0];
+        for(int i=1;i<array.length;i++){
+            ret = ret.concat(concatenatore);
+            ret = ret.concat(array[i]);
+        }
+        return ret;
     }
 
     public static String formattaSecondi(long secondi){

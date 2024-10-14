@@ -1,3 +1,16 @@
-2024 10 14 12:52:37 thread: 0   00:00:02
-2024 10 14 14:38:21	thread: 3	00:03:15
-2024 10 14 15:21:52	thread: 0	00:00:02
+2024 10 14 17:21:28	thread: 2	00:00:31	set:	ce24
+2024 10 14 17:23:16	thread: 2	00:00:27	set:	CE24
+2024 10 14 16:42:37	thread: 3	00:00:24	set:	ce24
+2024 10 14 16:41:40	thread: 1	00:00:18	set:	ce24
+
+2024 10 14 16:56:34	thread: 3	00:03:36	set:	shdop
+2024 10 14 16:46:23	thread: 1	00:02:31	set:	shdop
+2024 10 14 17:09:37	thread: 2	00:01:53	set:	shdop
+
+2024 10 14 17:19:36	thread: 3	00:03:37	set:	sorop
+2024 10 14 17:01:31	thread: 1	00:02:28	set:	sorop
+2024 10 14 17:14:46	thread: 2	00:02:06	set:	sorop
+
+2024 10 14 17:41:18	thread: 2	00:09:31	set:	CE24 - EE24 - GC23 - JTL - LEG - SEC - SHD - SHDOP - SHDPR - SOR - SOROP - SORPR - SORSH - TSHD - TSOR - TTWI - TWI
+2024 10 14 18:41:23	thread: 2	00:28:58	set:	CE24 - EE24 - GC23 - JTL - LEG - SEC - SHD - SHDOP - SHDPR - SOR - SOROP - SORPR - SORSH - TSHD - TSOR - TTWI - TWI
+2024 10 14 19:22:30	thread: 0	00:06:12	set:	CE24 - EE24 - GC23 - JTL - LEG - SEC - SHD - SHDOP - SHDPR - SOR - SOROP - SORPR - SORSH - TSHD - TSOR - TTWI - TWI
