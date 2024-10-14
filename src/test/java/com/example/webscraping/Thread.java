@@ -11,9 +11,10 @@ public class Thread extends java.lang.Thread {
         this.link = link;
         this.driver = driver;
     }
+    @Override
     public void run() {
         String line;
-        while((line = link.getLink()) != null){
+        while((line = link.getLink(this)) != null){
             driver.get(line);
             Carta c = new Carta(driver);
             link.add(c);
@@ -24,6 +25,8 @@ public class Thread extends java.lang.Thread {
             long secondi = tempoTrascorso / 1000;
             System.out.println("tempo trascorso:\t" + Scan.formattaSecondi(secondi));
         }
-        ((JavascriptExecutor) driver).executeScript("window.close()");
+        System.out.println("------------------------------------------------------diminuisco thread di uno");
+        link.hoFinito();
+        driver.quit();
     }
 }

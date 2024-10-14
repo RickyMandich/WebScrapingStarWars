@@ -101,18 +101,21 @@ public class Scan {
             for (String e : carte) {
                 System.out.println(e);
             }
-            Elenchi elenco = new Elenchi(carte);
+            driver.quit();
             System.out.println("inserisci il numero di thread che vuoi lanciare");
-            Thread[] processi = new Thread[new java.util.Scanner(System.in).nextInt()];
+            int numeroThread = new Scanner(System.in).nextInt();
+            Elenchi elenco = new Elenchi(carte, numeroThread);
+            Thread[] processi = new Thread[numeroThread];
             for(Thread t:processi){
-                ((JavascriptExecutor) driver).executeScript("window.open()");
-                ArrayList<String> tab = new ArrayList<>(driver.getWindowHandles());
-                t = new Thread(elenco, driver.switchTo().window(tab.getLast()));
+                t = new Thread(elenco, new ChromeDriver());
                 t.start();
             }
-            while(!elenco.finito);
+            elenco.start();
+            while(!elenco.finito){
+            }
+            collezione = elenco.getResult();
         } finally {
-            driver.quit();
+            System.out.println("-------------------finally--------------------------");
             long tempoTrascorso = System.nanoTime() / 1000000;
             tempoTrascorso = tempoTrascorso - tempo;
             long secondi = tempoTrascorso / 1000;
@@ -139,7 +142,7 @@ public class Scan {
                 scrivi(json);
             }
         }
-        Upload.main(new String[0]);
+        //Upload.main(new String[0]);
     }
 
     public static String formattaSecondi(long secondi){
