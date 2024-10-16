@@ -121,6 +121,7 @@ public class Scan {
             driver.quit();
             numeroThread = 2;                                                //new Scanner(System.in).nextInt();
             tempo  = System.nanoTime() / 1000000;
+            carte = orderAndCompact(carte);
             Elenchi elenco = new Elenchi(carte, numeroThread);
             Thread[] processi = new Thread[numeroThread];
             for (int i = 0; i < processi.length; i++) {
@@ -131,8 +132,9 @@ public class Scan {
             while(!fine){
                 fine = true;
                 for(Thread t : processi){
-                    if(t.isAlive()){
+                    if (t.isAlive()) {
                         fine = false;
+                        break;
                     }
                 }
             }
