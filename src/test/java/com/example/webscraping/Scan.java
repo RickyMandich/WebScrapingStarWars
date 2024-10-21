@@ -139,10 +139,8 @@ public class Scan {
                     }
                 }
             }
-            System.out.println("-----------------fine thread-----------------");
             collezione = elenco.getResult();
         } finally {
-            System.out.println("-------------------finally--------------------------");
             long tempoTrascorso = System.nanoTime() / 1000000;
             tempoTrascorso = tempoTrascorso - tempo;
             long secondi = tempoTrascorso / 1000;

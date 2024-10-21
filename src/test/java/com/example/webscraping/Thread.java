@@ -26,7 +26,6 @@ public class Thread extends java.lang.Thread {
                 link.carte.add(line);
             }
         }
-        System.out.println("------------------------------------------------------diminuisco thread di uno");
         link.hoFinito();
         driver.quit();
     }

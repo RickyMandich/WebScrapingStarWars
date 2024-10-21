@@ -94,10 +94,7 @@ public class Elenchi{
     }
 
     public void hoFinito(){
-        System.out.println("hoFinito prima di diminuire:" + thread);
         thread--;
-        System.out.println("hoFinito dopo aver diminuito:" + thread);
         if(thread == 0) finito = true;
-        System.out.println("hoFinito finito:" + finito);
     }
 }

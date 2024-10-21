@@ -26,7 +26,7 @@ public class Stringa{
     }
 
     public void add(String line){
-        if(next.equals(line)){
+        if(next != null && next.equals(line)){
             next = next.next;
         }
         if(next == null){
