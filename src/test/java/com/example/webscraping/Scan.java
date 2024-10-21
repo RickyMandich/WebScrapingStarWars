@@ -123,6 +123,7 @@ public class Scan {
             tempo  = System.nanoTime() / 1000000;
             carte = orderAndCompact(carte);
             Elenchi elenco = new Elenchi(carte, numeroThread);
+            elenco.carte.ready();
             Thread[] processi = new Thread[numeroThread];
             for (int i = 0; i < processi.length; i++) {
                 processi[i] = new Thread(elenco, new ChromeDriver());

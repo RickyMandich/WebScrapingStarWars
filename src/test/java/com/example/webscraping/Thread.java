@@ -23,7 +23,7 @@ public class Thread extends java.lang.Thread {
                 long secondi = tempoTrascorso / 1000;
                 System.out.println("tempo trascorso:\t" + Scan.formattaSecondi(secondi) + link.tempoStimato(secondi));
             }catch (Exception e) {
-                link.add(line);
+                link.carte.add(line);
             }
         }
         System.out.println("------------------------------------------------------diminuisco thread di uno");

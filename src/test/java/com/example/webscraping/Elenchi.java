@@ -3,11 +3,8 @@ package com.example.webscraping;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class Elenchi{
-    String[] carte;
+    Stringhe carte;
     Carta[] collezione;
     boolean semaforoCollezione = false;
     int i;
@@ -16,7 +13,7 @@ public class Elenchi{
     int thread;
 
     public Elenchi(){
-        carte = new String[0];
+        carte = new Stringhe(new String[0]);
         String linkBase = "https://swudb.com/card/";
         System.out.println("inserisci il set delle carte che vuoi inserire nel test");
         String set = new java.util.Scanner(System.in).nextLine();
@@ -25,7 +22,7 @@ public class Elenchi{
         System.out.println("inserisci il numero dell'ultima carta che vuoi inserire nel test");
         int end = new java.util.Scanner(System.in).nextInt();
         for(int i=start;i<=end;i++){
-            carte = Scan.add(carte, linkBase + set + "/" + String.format("%03d", i));
+            carte.add(linkBase + set + "/" + String.format("%03d", i));
         }
         this.collezione = new Carta[0];
         this.semaforoCollezione = false;
@@ -35,14 +32,10 @@ public class Elenchi{
     }
 
     public Elenchi(String[] carte, int thread){
-        this.carte = carte;
+        this.carte = new Stringhe(carte);
         collezione = new Carta[0];
         i=0;
         this.thread = thread;
-    }
-
-    public void first(){
-        i=0;
     }
 
     public String getLink(Thread t){
@@ -52,7 +45,7 @@ public class Elenchi{
         semaforoCollezione = true;
         String ret;
         try{
-            ret = carte[i++];
+            ret = carte.next();
             System.out.println("link emesso " + ret);
         }catch(ArrayIndexOutOfBoundsException e){
             ret =  null;
@@ -65,26 +58,23 @@ public class Elenchi{
         collezione = Scan.add(collezione, c);
     }
 
-    public void add(String link){
-        carte = Scan.add(carte, link);
-    }
-
     public String progresso(){
-        double puntoPercentuale = (double) carte.length /100;
+        double puntoPercentuale = (double) carte.size() /100;
         double percentuale = collezione.length / puntoPercentuale;
-        return collezione.length + "/" + carte.length + "(" + String.format("%.2f", percentuale) + "%)";
+        return collezione.length + "/" + carte.size() + "(" + String.format("%.2f", percentuale) + "%)";
     }
 
     public String tempoStimato(long secondi){
         double carta = (double) secondi/collezione.length;
-        long tempoStimatoTotale = (long) (carta * carte.length);
+        long tempoStimatoTotale = (long) (carta * carte.size());
         return "\ttempo stimato:\t" + Scan.formattaSecondi(tempoStimatoTotale - secondi);
     }
 
     public static void main(String[] args){
         Elenchi e = new Elenchi();
         WebDriver driver = new ChromeDriver();
-        driver.get(e.carte[0]);
+        e.carte.ready();
+        driver.get(e.carte.getString(0));
         e.add(new Carta(driver));
         System.out.println(e.progresso());
         try{
