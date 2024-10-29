@@ -31,7 +31,7 @@ public class Scan {
         return newArray;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException{
         WebDriver driver = new ChromeDriver();
         tempo  = System.nanoTime() / 1000000;
         Carta[] collezione = new Carta[0];
@@ -115,8 +115,15 @@ public class Scan {
                 }
                 System.out.println(elements.size());
             }
-            for (String e : carte) {
-                System.out.println(e);
+            try(FileWriter writer = new FileWriter("collezione.txt")){
+                writer.write("");
+                for (String c : carte) {
+                    System.out.println(c);
+                    writer.append(c.concat("\n"));
+                }
+            }catch (IOException e){
+                System.out.println("non ho trovato \"collezione.json\", inserisci tu il nome del file");
+                throw e;
             }
             driver.quit();
             numeroThread = 2;                                                //new Scanner(System.in).nextInt();
