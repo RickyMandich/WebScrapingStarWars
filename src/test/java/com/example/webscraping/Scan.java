@@ -32,7 +32,7 @@ public class Scan {
     }
 
     public static void main(String[] args) throws IOException{
-        WebDriver driver = new ChromeDriver();
+        WebDriver driver = new WebDriverWithoutImage();
         tempo  = System.nanoTime() / 1000000;
         Carta[] collezione = new Carta[0];
         String[] espansioni = new String[0];
@@ -95,7 +95,7 @@ public class Scan {
                     System.out.println("inserisci l'espansione da scansionare, se hai finito lascia vuoto");
                 }
             }
-            driver = new ChromeDriver();
+            driver = new WebDriverWithoutImage();
             String[] carte = new String[0];
             for(String set:espansioni){
                 System.out.println("ora scansiono " + set);
@@ -133,7 +133,7 @@ public class Scan {
             elenco.carte.ready();
             Thread[] processi = new Thread[numeroThread];
             for (int i = 0; i < processi.length; i++) {
-                processi[i] = new Thread(elenco, new ChromeDriver());
+                processi[i] = new Thread(elenco, new WebDriverWithoutImage());
                 processi[i].start();
             }
             boolean fine = false;
@@ -303,7 +303,7 @@ public class Scan {
         return new Gson().toJson(collezione);
     }
 
-    private static String getString(){
+    public static String getString(){
         try {
             return new Scanner(System.in).nextLine();
         } catch (NoSuchElementException e) {

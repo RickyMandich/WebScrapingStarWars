@@ -72,7 +72,7 @@ public class Elenchi{
 
     public static void main(String[] args){
         Elenchi e = new Elenchi();
-        WebDriver driver = new ChromeDriver();
+        WebDriver driver = new WebDriverWithoutImage();
         e.carte.ready();
         driver.get(e.carte.getString(0));
         e.add(new Carta(driver));

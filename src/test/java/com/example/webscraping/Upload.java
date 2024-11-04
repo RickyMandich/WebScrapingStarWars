@@ -18,7 +18,7 @@ public class Upload{
              }
              System.out.println(collezione.length);
              if(Scan.getString("vuoi che sovrascrivo la tabella? (s/n)").toLowerCase().equals("s")){
-                 try(Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/starwarsunlimited", "root", "Minecraft35?")) {
+                 try(Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/my_swudb", "swudb", "")) {
                      try (Statement stmt = conn.createStatement()) {
                          stmt.executeUpdate("delete from carte");
                      } catch (SQLException e) {
@@ -32,7 +32,7 @@ public class Upload{
              }
              System.out.println("inizio l'upload");
              for(Carta c : collezione){
-                 try(Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/starwarsunlimited", "root", "Minecraft35?")) {
+                 try(Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/my_swudb", "swudb", "")) {
                      try (Statement stmt = conn.createStatement()) {
                          if(stmt.executeUpdate(c.insertSql()) == 0){
                              System.out.print("non ");
@@ -48,6 +48,7 @@ public class Upload{
                      throw e;
                  }
              }
+             System.out.println(collezione[0].insertSql());
          }catch (IOException e){
              e.printStackTrace();
          }
