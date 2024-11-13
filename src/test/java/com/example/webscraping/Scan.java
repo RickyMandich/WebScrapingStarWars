@@ -47,6 +47,7 @@ public class Scan {
     }
 
     public static void main(String[] args) throws IOException{
+        boolean finito = false;
         WebDriver driver = new WebDriverWithoutImage();
         tempo  = System.nanoTime() / 1000000;
         Carta[] collezione = getJsonCollezione();
@@ -117,6 +118,7 @@ public class Scan {
             for (String c : carte) {
                 System.out.println(c);
             }
+            if(carte.length == 0) finito = true;
             driver.quit();
             numeroThread = 2;                                                //new Scanner(System.in).nextInt();
             tempo  = System.nanoTime() / 1000000;
@@ -164,6 +166,10 @@ public class Scan {
                 System.out.println("non ho trovato \"collezione.json\", inserisci tu il nome del file");
                 scrivi(json);
             }
+        }
+        if(!finito) Scan.main(args);
+        else{
+            alert("webscraping finito");
         }
     }
 
@@ -337,5 +343,9 @@ public class Scan {
         }catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+    public static void alert(String message){
+
     }
 }
