@@ -31,9 +31,9 @@ public class Elenchi{
         this.thread = 0;
     }
 
-    public Elenchi(String[] carte, int thread){
+    public Elenchi(String[] carte, int thread, Carta[] collezione){
         this.carte = new Stringhe(carte);
-        collezione = new Carta[0];
+        this.collezione = collezione;
         i=0;
         this.thread = thread;
     }

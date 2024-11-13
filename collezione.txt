@@ -4,10 +4,6 @@ https://swudb.com/card/CE24/003/Emperor+Palpatine
 https://swudb.com/card/CE24/004/Kylo+Ren
 https://swudb.com/card/CE24/005/Asajj+Ventress
 https://swudb.com/card/CE24/006/Darth+Maul
-https://swudb.com/card/EE24/523/Grogu
-https://swudb.com/card/GC23/1/Luke+Skywalker
-https://swudb.com/card/GC23/2/Darth+Vader
-https://swudb.com/card/SHD/001/Gar+Saxon
 https://swudb.com/card/SHD/002/Qi%27ra
 https://swudb.com/card/SHD/003/Finn
 https://swudb.com/card/SHD/004/Rey
@@ -1105,7 +1101,7 @@ https://swudb.com/card/TWI/013/Mace+Windu
 https://swudb.com/card/TWI/014/Asajj+Ventress
 https://swudb.com/card/TWI/015/General+Grievous
 https://swudb.com/card/TWI/016/Jango+Fett
-https://swudb.com/card/TWI/017/Chancellor+Palpatine+%2F%2F+Darth+Sidious
+https://swudb.com/card/TWI/017/Chancellor+Palpatine
 https://swudb.com/card/TWI/018/Quinlan+Vos
 https://swudb.com/card/TWI/019/Pau+City
 https://swudb.com/card/TWI/020/Sundari
@@ -1165,6 +1161,7 @@ https://swudb.com/card/TWI/073/Grievous+Reassembly
 https://swudb.com/card/TWI/074/Guarding+the+Way
 https://swudb.com/card/TWI/075/Disruptive+Burst
 https://swudb.com/card/TWI/076/Death+by+Droids
+https://swudb.com/card/TWI/077/Vanquish
 https://swudb.com/card/TWI/078/The+Invasion+of+Christophsis
 https://swudb.com/card/TWI/079/Confederate+Courier
 https://swudb.com/card/TWI/080/Poggle+the+Lesser
@@ -1194,6 +1191,7 @@ https://swudb.com/card/TWI/103/Pyrrhic+Assault
 https://swudb.com/card/TWI/104/Obedient+Vanguard
 https://swudb.com/card/TWI/105/Steadfast+Senator
 https://swudb.com/card/TWI/106/Coruscant+Guard
+https://swudb.com/card/TWI/107/Patrolling+V-Wing
 https://swudb.com/card/TWI/108/Ryloth+Militia
 https://swudb.com/card/TWI/109/501st+Liberator
 https://swudb.com/card/TWI/110/Huyang
@@ -1209,8 +1207,12 @@ https://swudb.com/card/TWI/119/Nameless+Valor
 https://swudb.com/card/TWI/120/Strategic+Acumen
 https://swudb.com/card/TWI/121/General%27s+Blade
 https://swudb.com/card/TWI/122/Squad+Support
+https://swudb.com/card/TWI/123/Outflank
+https://swudb.com/card/TWI/124/Tactical+Advantage
 https://swudb.com/card/TWI/125/The+Clone+Wars
 https://swudb.com/card/TWI/126/Encouraging+Leadership
+https://swudb.com/card/TWI/127/Resupply
+https://swudb.com/card/TWI/128/Take+Captive
 https://swudb.com/card/TWI/129/In+Defense+of+Kamino
 https://swudb.com/card/TWI/130/Bo-Katan+Kryze
 https://swudb.com/card/TWI/131/OOM-Series+Officer
@@ -1252,9 +1254,11 @@ https://swudb.com/card/TWI/166/Aurra+Sing
 https://swudb.com/card/TWI/167/Heavy+Persuader+Tank
 https://swudb.com/card/TWI/168/Old+Access+Codes
 https://swudb.com/card/TWI/169/Clone+Cohort
+https://swudb.com/card/TWI/170/Daring+Raid
 https://swudb.com/card/TWI/171/Grenade+Strike
 https://swudb.com/card/TWI/172/Grim+Resolve
 https://swudb.com/card/TWI/173/Blood+Sport
+https://swudb.com/card/TWI/174/Open+Fire
 https://swudb.com/card/TWI/175/Strategic+Analysis
 https://swudb.com/card/TWI/176/Caught+in+the+Crossfire
 https://swudb.com/card/TWI/177/Guerilla+Insurgency
@@ -1306,6 +1310,7 @@ https://swudb.com/card/TWI/222/Political+Pressure
 https://swudb.com/card/TWI/223/Unmasking+the+Conspiracy
 https://swudb.com/card/TWI/224/Breaking+In
 https://swudb.com/card/TWI/225/Now+There+Are+Two+of+Them
+https://swudb.com/card/TWI/226/Waylay
 https://swudb.com/card/TWI/227/Prisoner+of+War
 https://swudb.com/card/TWI/228/Droid+Starfighter
 https://swudb.com/card/TWI/229/Battle+Droid+Escort
@@ -1333,18 +1338,10 @@ https://swudb.com/card/TWI/250/Sword+and+Shield+Maneuver
 https://swudb.com/card/TWI/251/Drop+In
 https://swudb.com/card/TWI/252/Aggrieved+Parliamentarian
 https://swudb.com/card/TWI/253/Headhunter+Squadron
+https://swudb.com/card/TWI/254/Volunteer+Soldier
 https://swudb.com/card/TWI/255/Brain+Invaders
 https://swudb.com/card/TWI/256/Hold-Out+Blaster
 https://swudb.com/card/TWI/257/Private+Manufacturing
-https://swudb.com/card/TWI/330/Warrior+Drone
-https://swudb.com/card/TWI/331/Padawan+Starfighter
-https://swudb.com/card/TWI/332/Royal+Guard+Attach%C3%A9
-https://swudb.com/card/TWI/333/Trade+Federation+Shuttle
-https://swudb.com/card/TWI/334/Infantry+of+the+212th
-https://swudb.com/card/TWI/335/Daughter+of+Dathomir
-https://swudb.com/card/TWI/336/Vulture+Interceptor+Wing
-https://swudb.com/card/TWI/366/Shaak+Ti
-https://swudb.com/card/TWI/398/Bo-Katan+Kryze
 https://swudb.com/card/TWI/276/Nala+Se
 https://swudb.com/card/TWI/277/Nute+Gunray
 https://swudb.com/card/TWI/278/Obi-Wan+Kenobi
@@ -1359,7 +1356,7 @@ https://swudb.com/card/TWI/287/Anakin+Skywalker
 https://swudb.com/card/TWI/288/Mace+Windu
 https://swudb.com/card/TWI/289/Asajj+Ventress
 https://swudb.com/card/TWI/291/Jango+Fett
-https://swudb.com/card/TWI/292/Chancellor+Palpatine+%2F%2F+Darth+Sidious
+https://swudb.com/card/TWI/292/Chancellor+Palpatine
 https://swudb.com/card/TWI/293/Quinlan+Vos
 https://swudb.com/card/TWI/294/Pau+City
 https://swudb.com/card/TWI/295/Sundari
@@ -1396,6 +1393,14 @@ https://swudb.com/card/TWI/325/Hello+There
 https://swudb.com/card/TWI/326/Finn
 https://swudb.com/card/TWI/327/Duchess%27s+Champion
 https://swudb.com/card/TWI/328/Equalize
+https://swudb.com/card/TWI/329/Compassionate+Senator
+https://swudb.com/card/TWI/330/Warrior+Drone
+https://swudb.com/card/TWI/331/Padawan+Starfighter
+https://swudb.com/card/TWI/332/Royal+Guard+Attach%C3%A9
+https://swudb.com/card/TWI/333/Trade+Federation+Shuttle
+https://swudb.com/card/TWI/334/Infantry+of+the+212th
+https://swudb.com/card/TWI/335/Daughter+of+Dathomir
+https://swudb.com/card/TWI/336/Vulture+Interceptor+Wing
 https://swudb.com/card/TWI/337/Ki-Adi-Mundi
 https://swudb.com/card/TWI/338/Falchion+Ion+Tank
 https://swudb.com/card/TWI/339/Multi-Troop+Transport
@@ -1409,6 +1414,7 @@ https://swudb.com/card/TWI/346/Grievous+Reassembly
 https://swudb.com/card/TWI/347/Guarding+the+Way
 https://swudb.com/card/TWI/348/Disruptive+Burst
 https://swudb.com/card/TWI/349/Death+by+Droids
+https://swudb.com/card/TWI/350/Vanquish
 https://swudb.com/card/TWI/351/The+Invasion+of+Christophsis
 https://swudb.com/card/TWI/352/Confederate+Courier
 https://swudb.com/card/TWI/353/Poggle+the+Lesser
@@ -1424,6 +1430,7 @@ https://swudb.com/card/TWI/362/Echo
 https://swudb.com/card/TWI/363/Republic+Tactical+Officer
 https://swudb.com/card/TWI/364/Admiral+Yularen
 https://swudb.com/card/TWI/365/Advanced+Recon+Commando
+https://swudb.com/card/TWI/366/Shaak+Ti
 https://swudb.com/card/TWI/367/Pelta+Supply+Frigate
 https://swudb.com/card/TWI/368/Aayla+Secura
 https://swudb.com/card/TWI/369/Republic+Defense+Carrier
@@ -1452,7 +1459,10 @@ https://swudb.com/card/TWI/391/General%27s+Blade
 https://swudb.com/card/TWI/392/Squad+Support
 https://swudb.com/card/TWI/393/The+Clone+Wars
 https://swudb.com/card/TWI/394/Encouraging+Leadership
+https://swudb.com/card/TWI/395/Resupply
+https://swudb.com/card/TWI/396/Take+Captive
 https://swudb.com/card/TWI/397/In+Defense+of+Kamino
+https://swudb.com/card/TWI/398/Bo-Katan+Kryze
 https://swudb.com/card/TWI/399/OOM-Series+Officer
 https://swudb.com/card/TWI/400/Confederate+Tri-Fighter
 https://swudb.com/card/TWI/401/B1+Attack+Platform
@@ -1491,6 +1501,7 @@ https://swudb.com/card/TWI/433/Aurra+Sing
 https://swudb.com/card/TWI/434/Heavy+Persuader+Tank
 https://swudb.com/card/TWI/435/Old+Access+Codes
 https://swudb.com/card/TWI/436/Clone+Cohort
+https://swudb.com/card/TWI/437/Daring+Raid
 https://swudb.com/card/TWI/438/Grenade+Strike
 https://swudb.com/card/TWI/439/Grim+Resolve
 https://swudb.com/card/TWI/440/Blood+Sport
@@ -1568,6 +1579,7 @@ https://swudb.com/card/TWI/510/Sword+and+Shield+Maneuver
 https://swudb.com/card/TWI/511/Drop+In
 https://swudb.com/card/TWI/512/Aggrieved+Parliamentarian
 https://swudb.com/card/TWI/513/Headhunter+Squadron
+https://swudb.com/card/TWI/514/Volunteer+Soldier
 https://swudb.com/card/TWI/515/Brain+Invaders
 https://swudb.com/card/TWI/516/Hold-Out+Blaster
 https://swudb.com/card/TWI/517/Private+Manufacturing
@@ -1589,8 +1601,8 @@ https://swudb.com/card/TWI/270/Mace+Windu
 https://swudb.com/card/TWI/271/Asajj+Ventress
 https://swudb.com/card/TWI/272/General+Grievous
 https://swudb.com/card/TWI/273/Jango+Fett
-https://swudb.com/card/TWI/274/Chancellor+Palpatine+%2F%2F+Darth+Sidious
-https://swudb.com/card/TWI/293/Quinlan+Vos
+https://swudb.com/card/TWI/274/Chancellor+Palpatine
+https://swudb.com/card/TWI/275/Quinlan+Vos
 https://swudb.com/card/TWIOP/01/Perilous+Position
 https://swudb.com/card/TWIOP/02/Droideka+Security
 https://swudb.com/card/TWIOP/11/B1+Security+Team
@@ -1613,3 +1625,5 @@ https://swudb.com/card/TWIOP/09/Captain+Rex
 https://swudb.com/card/TWIOP/10/General%27s+Guardian
 https://swudb.com/card/TWIPR/1/Ahsoka+Tano
 https://swudb.com/card/TWIPR/2/General+Grievous
+https://swudb.com/card/TWISH/1/Savage+Opress
+https://swudb.com/card/TWISH/2/Gor

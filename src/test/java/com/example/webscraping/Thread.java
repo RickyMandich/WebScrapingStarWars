@@ -14,17 +14,13 @@ public class Thread extends java.lang.Thread {
     public void run() {
         String line;
         while((line = link.getLink(this)) != null){
-            try {
-                driver.get(line);
-                link.add(new Carta(driver));
-                System.out.println(link.progresso());
-                long tempoTrascorso = System.nanoTime() / 1000000;
-                tempoTrascorso = tempoTrascorso - Scan.tempo;
-                long secondi = tempoTrascorso / 1000;
-                System.out.println("tempo trascorso:\t" + Scan.formattaSecondi(secondi) + link.tempoStimato(secondi));
-            }catch (Exception e) {
-                link.carte.add(line);
-            }
+            driver.get(line);
+            link.add(new Carta(driver));
+            System.out.println(link.progresso());
+            long tempoTrascorso = System.nanoTime() / 1000000;
+            tempoTrascorso = tempoTrascorso - Scan.tempo;
+            long secondi = tempoTrascorso / 1000;
+            System.out.println("tempo trascorso:\t" + Scan.formattaSecondi(secondi) + link.tempoStimato(secondi));
         }
         link.hoFinito();
         driver.quit();

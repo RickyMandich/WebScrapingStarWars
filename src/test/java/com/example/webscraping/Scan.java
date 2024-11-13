@@ -1,7 +1,7 @@
 package com.example.webscraping;
 
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import com.google.gson.Gson;
 
@@ -24,6 +24,21 @@ public class Scan {
         return newArray;
     }
 
+    public static boolean contains(Carta[] collezione, String espansione, String numero){
+        for(Carta c:collezione){
+            if(c.espansione.equals(espansione) && c.numero == Integer.parseInt(numero)) return true;
+        }
+        return false;
+    }
+
+    public static String[] add(String[] array, String line, Carta[] collezione){
+        if(contains(collezione, line.split("/")[4], line.split("/")[5])) return array;
+        String[] newArray = new String[array.length + 1];
+        System.arraycopy(array, 0, newArray, 0, array.length);
+        newArray[array.length] = line;
+        return newArray;
+    }
+
     public static Carta[] add(Carta[] array, Carta line){
         Carta[] newArray = new Carta[array.length + 1];
         System.arraycopy(array, 0, newArray, 0, array.length);
@@ -34,7 +49,7 @@ public class Scan {
     public static void main(String[] args) throws IOException{
         WebDriver driver = new WebDriverWithoutImage();
         tempo  = System.nanoTime() / 1000000;
-        Carta[] collezione = new Carta[0];
+        Carta[] collezione = getJsonCollezione();
         String[] espansioni = new String[0];
         String line;
         int numeroThread = 0;
@@ -72,28 +87,13 @@ public class Scan {
             System.out.println("inserisci l'espansione da scansionare, se hai finito lascia vuoto");
             boolean inCorso = true;
             driver.quit();
-            while(inCorso && !(line = new Scanner(System.in).nextLine()).isEmpty()){
-                inCorso = false;
-                if(line.equalsIgnoreCase("all")){
-                    for(String set:Carta.uscitaEspansioni.keySet()){
-                        espansioni = add(espansioni, set);
-                    }
-                    System.out.println("-----------------------\narray espansioni = ");
-                    espansioni = orderAndCompact(espansioni);
-                    for(String s: espansioni){
-                        System.out.println(s);
-                    }
-                }else if(line.equalsIgnoreCase("singolo 1")){
-                    espansioni = add(espansioni, "sorop");
-                }else if(line.equalsIgnoreCase("singolo 2")){
-                    espansioni = add(espansioni, "shdop");
-                }else if(line.equalsIgnoreCase("doppio")){
-                    espansioni = add(add(espansioni, "shdop"), "sorop");
-                }else {
-                    inCorso = true;
-                    espansioni = add(espansioni, line);
-                    System.out.println("inserisci l'espansione da scansionare, se hai finito lascia vuoto");
-                }
+            for(String set:Carta.uscitaEspansioni.keySet()){
+                espansioni = add(espansioni, set);
+            }
+            System.out.println("-----------------------\narray espansioni = ");
+            espansioni = orderAndCompact(espansioni);
+            for(String s: espansioni){
+                System.out.println(s);
             }
             driver = new WebDriverWithoutImage();
             String[] carte = new String[0];
@@ -106,11 +106,10 @@ public class Scan {
                     espansioni = add(espansioni, set);
                 }
                 List<WebElement> elements = driver.findElements(By.className("col-6"));
-                //String[] carte = new String[5];
                 for (WebElement e : elements) {
                     String href = e.findElement(By.tagName("a")).getAttribute("href");
                     if(href.split("/")[href.split("/").length-2].charAt(0) != 'T'){
-                        carte = add(carte, href);
+                        carte = add(carte, href, collezione);
                     }
                 }
                 System.out.println(elements.size());
@@ -129,7 +128,7 @@ public class Scan {
             numeroThread = 2;                                                //new Scanner(System.in).nextInt();
             tempo  = System.nanoTime() / 1000000;
             carte = orderAndCompact(carte);
-            Elenchi elenco = new Elenchi(carte, numeroThread);
+            Elenchi elenco = new Elenchi(carte, numeroThread, collezione);
             elenco.carte.ready();
             Thread[] processi = new Thread[numeroThread];
             for (int i = 0; i < processi.length; i++) {
@@ -172,10 +171,25 @@ public class Scan {
                 scrivi(json);
             }
         }
-        //Upload.main(new String[0]);
+    }
+
+    private static Carta[] getJsonCollezione(){
+        try{
+            BufferedReader reader = new BufferedReader(new FileReader("collezione.json"));
+            String line;
+            if((line=reader.readLine()) != null){
+                return new Gson().fromJson(line, Carta[].class);
+            }else{
+                throw new IOException("il file 'collezione.json' è vuoto");
+            }
+        }catch (IOException e){
+            return new Carta[0];
+        }
     }
 
     public static String join(String[] array, String concatenatore){
+        if(array.length == 0) return "";
+        else if (array.length == 1) return array[0];
         String ret = array[0];
         for(int i=1;i<array.length;i++){
             ret = ret.concat(concatenatore);
