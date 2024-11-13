@@ -1,6 +1,6 @@
 package com.example.webscraping;
 
-import net.bytebuddy.implementation.bytecode.Throw;
+import org.apache.commons.net.ftp.FTPClient;
 import org.openqa.selenium.*;
 
 import com.google.gson.Gson;
@@ -114,15 +114,8 @@ public class Scan {
                 }
                 System.out.println(elements.size());
             }
-            try(FileWriter writer = new FileWriter("collezione.txt")){
-                writer.write("");
-                for (String c : carte) {
-                    System.out.println(c);
-                    writer.append(c.concat("\n"));
-                }
-            }catch (IOException e){
-                System.out.println("non ho trovato \"collezione.json\", inserisci tu il nome del file");
-                throw e;
+            for (String c : carte) {
+                System.out.println(c);
             }
             driver.quit();
             numeroThread = 2;                                                //new Scanner(System.in).nextInt();
@@ -166,6 +159,7 @@ public class Scan {
             String json = json(collezione);
             try(FileWriter writer = new FileWriter("collezione.json")){
                 writer.write(json);
+                uploadWithFtp("collezione.json");
             }catch (IOException e){
                 System.out.println("non ho trovato \"collezione.json\", inserisci tu il nome del file");
                 scrivi(json);
@@ -329,5 +323,19 @@ public class Scan {
         System.out.println(message);
         Toolkit.getDefaultToolkit().beep();
         return getString();
+    }
+
+    public static void uploadWithFtp(String filePath){
+        FTPClient ftp = new FTPClient();
+        try {
+            ftp.connect("ftp.swudb.altervista.org");
+            ftp.login("swudb", "Minecraft35?");
+            ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
+            ftp.storeFile(filePath, new FileInputStream(filePath));
+            ftp.logout();
+            ftp.disconnect();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }
