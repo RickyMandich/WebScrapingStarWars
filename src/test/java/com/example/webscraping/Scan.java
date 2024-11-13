@@ -1,12 +1,16 @@
 package com.example.webscraping;
-
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.openqa.selenium.*;
 
 import com.google.gson.Gson;
 
 import java.awt.*;
 import java.io.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -53,6 +57,7 @@ public class Scan {
         Carta[] collezione = getJsonCollezione();
         String[] espansioni = new String[0];
         String line;
+        String datiEsecuzione = "";
         int numeroThread = 0;
         try {
             Exception exception = null;
@@ -155,7 +160,8 @@ public class Scan {
                 }
             } catch (IOException ignore) {}
             try(FileWriter writer = new FileWriter("tempo.txt")){
-                writer.write(fileTempo + new SimpleDateFormat("yyyy MM dd HH:mm:ss").format(new Date()) + "\tthread: " + numeroThread + "\t" + formattaSecondi(secondi) + "\tset:\t" + join(espansioni, " - ") + "\n");
+                datiEsecuzione = "\t" + new SimpleDateFormat("yyyy MM dd HH:mm:ss").format(new Date()) + "\tthread: " + numeroThread + "\ttempo trascorso:\t" + formattaSecondi(secondi) + "\tset:\t" + join(espansioni, " - ");
+                writer.write(fileTempo + datiEsecuzione + "\n");
             }catch (IOException ignore){}
             Toolkit.getDefaultToolkit().beep();
             String json = json(collezione);
@@ -169,7 +175,7 @@ public class Scan {
         }
         if(!finito) Scan.main(args);
         else{
-            alert("webscraping finito");
+            alert("webscraping finito" + datiEsecuzione);
         }
     }
 
@@ -346,6 +352,24 @@ public class Scan {
     }
 
     public static void alert(String message){
+        final String BOT_TOKEN = "7717265706:AAH5chf4Ae3vsFSt7158K-RFWdh9BudnnQc";
+        final String CHAT_ID = "5533337157";
+        try {
+            String urlEncodedMessage = URLEncoder.encode(message, StandardCharsets.UTF_8.toString());
+            String url = String.format(
+                "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s",
+                BOT_TOKEN, CHAT_ID, urlEncodedMessage
+            );
 
+            try (CloseableHttpClient client = HttpClients.createDefault()) {
+                HttpGet request = new HttpGet(url);
+                client.execute(request);
+            }
+
+            System.out.println("Telegram notification sent successfully!");
+        } catch (IOException e) {
+            System.err.println("Error sending Telegram notification: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
