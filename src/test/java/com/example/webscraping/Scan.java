@@ -50,14 +50,20 @@ public class Scan {
         return newArray;
     }
 
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args){
         boolean finito = false;
         WebDriver driver = new WebDriverWithoutImage();
         tempo  = System.nanoTime() / 1000000;
         Carta[] collezione = getJsonCollezione();
         String[] espansioni = new String[0];
         String line;
-        String datiEsecuzione = "";
+        long secondi = 0;
+        if(args.length == 1){
+            secondi = Long.parseLong(args[0]);
+        }else{
+            args = new String[1];
+        }
+        String datiEsecuzione = "\t" + new SimpleDateFormat("yyyy MM dd HH:mm:ss").format(new Date());
         int numeroThread = 0;
         try {
             Exception exception = null;
@@ -149,7 +155,7 @@ public class Scan {
         } finally {
             long tempoTrascorso = System.nanoTime() / 1000000;
             tempoTrascorso = tempoTrascorso - tempo;
-            long secondi = tempoTrascorso / 1000;
+            secondi += tempoTrascorso / 1000;
             System.out.println("tempo trascorso:\t" + formattaSecondi(secondi));
             BufferedReader reader;
             String fileTempo = "";
@@ -160,7 +166,7 @@ public class Scan {
                 }
             } catch (IOException ignore) {}
             try(FileWriter writer = new FileWriter("tempo.txt")){
-                datiEsecuzione = "\t" + new SimpleDateFormat("yyyy MM dd HH:mm:ss").format(new Date()) + "\tthread: " + numeroThread + "\ttempo trascorso:\t" + formattaSecondi(secondi) + "\tset:\t" + join(espansioni, " - ");
+                datiEsecuzione += "\tthread: " + numeroThread + "\ttempo trascorso:\t" + formattaSecondi(secondi) + "\tset:\t" + join(espansioni, " - ");
                 writer.write(fileTempo + datiEsecuzione + "\n");
             }catch (IOException ignore){}
             Toolkit.getDefaultToolkit().beep();
@@ -173,6 +179,7 @@ public class Scan {
                 scrivi(json);
             }
         }
+        args[0] = secondi+"";
         if(!finito) Scan.main(args);
         else{
             alert("webscraping finito" + datiEsecuzione);
