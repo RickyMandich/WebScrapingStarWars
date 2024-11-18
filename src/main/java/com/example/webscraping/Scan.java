@@ -133,7 +133,7 @@ public class Scan {
             }
             if(carte.length == 0) finito = true;
             driver.quit();
-            numeroThread = 2;                                                //new Scanner(System.in).nextInt();
+            numeroThread = 4;                                                //new Scanner(System.in).nextInt();
             tempo  = System.nanoTime() / 1000000;
             carte = orderAndCompact(carte);
             Elenchi elenco = new Elenchi(carte, numeroThread, collezione);
