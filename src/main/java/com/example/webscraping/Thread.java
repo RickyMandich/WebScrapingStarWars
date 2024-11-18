@@ -14,8 +14,10 @@ public class Thread extends java.lang.Thread {
     public void run() {
         String line;
         while((line = link.getLink(this)) != null){
-            driver.get(line);
-            link.add(new Carta(driver));
+            try {
+                driver.get(line);
+                link.add(new Carta(driver));
+            } catch (Exception ignore) {}
             System.out.println(link.progresso());
             long tempoTrascorso = System.nanoTime() / 1000000;
             tempoTrascorso = tempoTrascorso - Scan.tempo;

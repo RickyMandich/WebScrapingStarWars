@@ -11,6 +11,7 @@ public class Elenchi{
     boolean finito = false;
     //thread che sono in esecuzione
     int thread;
+    int carteGiaFatte;
 
     public Elenchi(){
         carte = new Stringhe(new String[0]);
@@ -34,6 +35,7 @@ public class Elenchi{
     public Elenchi(String[] carte, int thread, Carta[] collezione){
         this.carte = new Stringhe(carte);
         this.collezione = collezione;
+        this.carteGiaFatte = collezione.length;
         i=0;
         this.thread = thread;
     }
@@ -60,12 +62,12 @@ public class Elenchi{
 
     public String progresso(){
         double puntoPercentuale = (double) carte.size() /100;
-        double percentuale = collezione.length / puntoPercentuale;
-        return collezione.length + "/" + carte.size() + "(" + String.format("%.2f", percentuale) + "%)";
+        double percentuale = (collezione.length-carteGiaFatte) / puntoPercentuale;
+        return (collezione.length-carteGiaFatte) + "/" + carte.size() + "(" + String.format("%.2f", percentuale) + "%)";
     }
 
     public String tempoStimato(long secondi){
-        double carta = (double) secondi/collezione.length;
+        double carta = (double) secondi/(collezione.length-carteGiaFatte);
         long tempoStimatoTotale = (long) (carta * carte.size());
         return "\ttempo stimato:\t" + Scan.formattaSecondi(tempoStimatoTotale - secondi);
     }

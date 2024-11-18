@@ -52,7 +52,7 @@ public class Scan {
     }
 
     public static void main(String[] args){
-        alert("programma lanciato");
+        if(args.length == 0) alert("programma lanciato");
         boolean finito = false;
         WebDriver driver = new WebDriverWithoutImage();
         tempo  = System.nanoTime() / 1000000;
