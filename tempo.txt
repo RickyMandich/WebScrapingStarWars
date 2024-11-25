@@ -1,8 +1,1 @@
-	2024 11 14 09:01:00	thread: 2	tempo trascorso:	00:00:08	set:	CE24 - EE24 - GC23 - JTL - LEG - SEC - SHD - SHDOP - SHDPQ - SHDPR - SHDSH - SOR - SOROP - SORPR - SORSH - TSHD - TSOR - TTWI - TWI - TWIOP - TWIPR - TWISH
-	2024 11 14 09:01:34	thread: 2	tempo trascorso:	00:00:01	set:	CE24 - EE24 - GC23 - JTL - LEG - SEC - SHD - SHDOP - SHDPQ - SHDPR - SHDSH - SOR - SOROP - SORPR - SORSH - TSHD - TSOR - TTWI - TWI - TWIOP - TWIPR - TWISH
-	2024 11 14 09:16:32	thread: 2	tempo trascorso:	00:00:08	set:	CE24 - EE24 - GC23 - JTL - LEG - SEC - SHD - SHDOP - SHDPQ - SHDPR - SHDSH - SOR - SOROP - SORPR - SORSH - TSHD - TSOR - TTWI - TWI - TWIOP - TWIPR - TWISH
-	2024 11 14 09:18:36	thread: 2	tempo trascorso:	00:00:10	set:	CE24 - EE24 - GC23 - JTL - LEG - SEC - SHD - SHDOP - SHDPQ - SHDPR - SHDSH - SOR - SOROP - SORPR - SORSH - TSHD - TSOR - TTWI - TWI - TWIOP - TWIPR - TWISH
-	2024 11 14 09:19:26	thread: 2	tempo trascorso:	00:00:11	set:	CE24 - EE24 - GC23 - JTL - LEG - SEC - SHD - SHDOP - SHDPQ - SHDPR - SHDSH - SOR - SOROP - SORPR - SORSH - TSHD - TSOR - TTWI - TWI - TWIOP - TWIPR - TWISH
-	2024 11 18 19:07:58	thread: 2	tempo trascorso:	00:00:02	set:	CE24 - EE24 - GC23 - JTL - LEG - SEC - SHD - SHDOP - SHDPQ - SHDPR - SHDSH - SOR - SOROP - SORPR - SORSH - TSHD - TSOR - TTWI - TWI - TWIOP - TWIPR - TWISH
-	2024 11 18 19:24:33	thread: 4	tempo trascorso:	00:01:15	set:	CE24 - EE24 - GC23 - JTL - LEG - SEC - SHD - SHDOP - SHDPQ - SHDPR - SHDSH - SOR - SOROP - SORPR - SORSH - TSHD - TSOR - TTWI - TWI - TWIOP - TWIPR - TWISH
-	2024 11 18 19:26:24	thread: 0	tempo trascorso:	00:01:20	set:	CE24 - EE24 - GC23 - JTL - LEG - SEC - SHD - SHDOP - SHDPQ - SHDPR - SHDSH - SOR - SOROP - SORPR - SORSH - TSHD - TSOR - TTWI - TWI - TWIOP - TWIPR - TWISH
+[[[[WebDriverWithoutImage: chrome on windows (9292e30d0a99c4666c8c643e86050342)] -> class name: card-ability-text]] -> tag name: p]
