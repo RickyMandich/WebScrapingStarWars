@@ -16,15 +16,19 @@ public class Thread extends java.lang.Thread {
         while((line = link.getLink(this)) != null){
             try {
                 driver.get(line);
+                System.out.println("pagina caricata");
                 link.add(new Carta(driver));
             } catch (Exception ignore) {}
             System.out.println(link.progresso());
+            System.out.println("dopo progresso");
             long tempoTrascorso = System.nanoTime() / 1000000;
             tempoTrascorso = tempoTrascorso - Scan.tempo;
             long secondi = tempoTrascorso / 1000;
             System.out.println("tempo trascorso:\t" + Scan.formattaSecondi(secondi) + link.tempoStimato(secondi));
         }
+        System.out.println("ho finito");
         link.hoFinito();
+        System.out.println("quit");
         driver.quit();
     }
 }

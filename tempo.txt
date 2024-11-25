@@ -1,1 +1,2 @@
 [[[[WebDriverWithoutImage: chrome on windows (9292e30d0a99c4666c8c643e86050342)] -> class name: card-ability-text]] -> tag name: p]
+	2024 11 25 19:53:21	thread: 4	tempo trascorso:	00:14:44	set:	CE24 - EE24 - GC23 - JTL - LEG - SEC - SHD - SHDOP - SHDPQ - SHDPR - SHDSH - SOR - SOROP - SORPR - SORSH - TSHD - TSOR - TTWI - TWI - TWIOP - TWIPQ - TWIPR - TWISH

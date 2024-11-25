@@ -94,13 +94,8 @@ public class Scan {
                 if(uscita.split(" ")[0].startsWith("Q")) uscita = uscita.split(" ")[1];
                 Carta.uscitaEspansioni.put(set, elaboraData(uscita));
             }
-            System.out.println("espansioni e date");
-            for(String set:Carta.uscitaEspansioni.keySet()){
-                System.out.println(set + "\t" + Carta.uscitaEspansioni.get(set));
-            }
-            System.out.println("inserisci l'espansione da scansionare, se hai finito lascia vuoto");
-            boolean inCorso = true;
             driver.quit();
+            boolean inCorso = true;
             for(String set:Carta.uscitaEspansioni.keySet()){
                 espansioni = add(espansioni, set);
             }
@@ -126,7 +121,6 @@ public class Scan {
                         carte = add(carte, href, collezione);
                     }
                 }
-                System.out.println(elements.size());
             }
             for (String c : carte) {
                 System.out.println(c);
