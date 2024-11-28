@@ -38,10 +38,7 @@ public class Scan {
 
     public static String[] add(String[] array, String line, Carta[] collezione){
         if(contains(collezione, line.split("/")[4], line.split("/")[5])) return array;
-        String[] newArray = new String[array.length + 1];
-        System.arraycopy(array, 0, newArray, 0, array.length);
-        newArray[array.length] = line;
-        return newArray;
+        return add(array, line);
     }
 
     public static Carta[] add(Carta[] array, Carta line){

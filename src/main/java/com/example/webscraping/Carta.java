@@ -122,9 +122,11 @@ public class Carta{
                 Pattern pspan = Pattern.compile("(<span.*?>)");
                 Matcher mspan = pspan.matcher(innerHTML);
                 int i=0;
-                while(mspan.find()){
-                    innerHTML = innerHTML.replace(mspan.group(i++), "");
-                }
+                try {
+                    while(mspan.find()){
+                        innerHTML = innerHTML.replace(mspan.group(i++), "");
+                    }
+                } catch (Exception ignore) {}
                 innerHTML = innerHTML.replace("<em>", "");
                 innerHTML = innerHTML.replace("</em>", "");
                 innerHTML = innerHTML.replace("<strong>", "");
