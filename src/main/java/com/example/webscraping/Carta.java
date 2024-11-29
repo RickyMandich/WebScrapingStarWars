@@ -119,14 +119,16 @@ public class Carta{
                 innerHTML = innerHTML.replace("<img src=\"/images/Villainy.png\" class=\"card-stats-aspect line-height\" alt=\"Villainy Aspect\">", "D");
                 innerHTML = innerHTML.replace("<img src=\"/images/Heroism.png\" class=\"card-stats-aspect line-height\" alt=\"Heroism Aspect\">", "W");
                 innerHTML = innerHTML.replace("</span>", "");
-                Pattern pspan = Pattern.compile("(<span.*?>)");
+                Pattern pspan = Pattern.compile("<span.*?>");
                 Matcher mspan = pspan.matcher(innerHTML);
-                int i=0;
                 try {
                     while(mspan.find()){
-                        innerHTML = innerHTML.replace(mspan.group(i++), "");
+                        System.out.println(mspan.group());
+                        innerHTML = innerHTML.replace(mspan.group(), "");
                     }
-                } catch (Exception ignore) {}
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 innerHTML = innerHTML.replace("<em>", "");
                 innerHTML = innerHTML.replace("</em>", "");
                 innerHTML = innerHTML.replace("<strong>", "");
@@ -134,6 +136,7 @@ public class Carta{
                 descrizione = descrizione.concat("ability:"+ innerHTML);
             }
         }
+        System.out.println(descrizione);
         try{
             arena = removeSlash(driver.findElement(By.cssSelector(".card-stats-arena-box>span")));
         }catch (NoSuchElementException e){
@@ -224,9 +227,9 @@ public class Carta{
         WebDriver driver = null;
         try {
             System.out.println("inserisci l'espansione");
-            String espansione = /*new java.util.Scanner(System.in).nextLine()*/"shd".toUpperCase();
+            String espansione = /*new java.util.Scanner(System.in).nextLine()*/"ce24".toUpperCase();
             System.out.println("inserisci il numero");
-            String numero = String.format("%03d", /*new java.util.Scanner(System.in).nextInt()*/86);
+            String numero = String.format("%03d", /*new java.util.Scanner(System.in).nextInt()*/5);
             String link = "https://swudb.com/card/" + espansione + "/" + numero;
             System.out.println("web scraping di " + link);
             driver = new WebDriverWithoutImage();
