@@ -123,12 +123,9 @@ public class Carta{
                 Matcher mspan = pspan.matcher(innerHTML);
                 try {
                     while(mspan.find()){
-                        System.out.println(mspan.group());
                         innerHTML = innerHTML.replace(mspan.group(), "");
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                } catch (Exception ignore) {}
                 innerHTML = innerHTML.replace("<em>", "");
                 innerHTML = innerHTML.replace("</em>", "");
                 innerHTML = innerHTML.replace("<strong>", "");
@@ -136,7 +133,6 @@ public class Carta{
                 descrizione = descrizione.concat("ability:"+ innerHTML);
             }
         }
-        System.out.println(descrizione);
         try{
             arena = removeSlash(driver.findElement(By.cssSelector(".card-stats-arena-box>span")));
         }catch (NoSuchElementException e){
