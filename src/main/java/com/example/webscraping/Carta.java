@@ -131,7 +131,7 @@ public class Carta{
                 innerHTML = innerHTML.replace("</em>", "");
                 innerHTML = innerHTML.replace("<strong>", "");
                 innerHTML = innerHTML.replace("</strong>", "");
-                descrizione = descrizione.concat("ability:\n\t"+ innerHTML +"\n");
+                descrizione = descrizione.concat("ability:"+ innerHTML);
             }
         }
         try{
