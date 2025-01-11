@@ -223,9 +223,9 @@ public class Carta{
         WebDriver driver = null;
         try {
             System.out.println("inserisci l'espansione");
-            String espansione = /*new java.util.Scanner(System.in).nextLine()*/"SHD".toUpperCase();
+            String espansione = new java.util.Scanner(System.in).nextLine().toUpperCase();
             System.out.println("inserisci il numero");
-            String numero = String.format("%03d", /*new java.util.Scanner(System.in).nextInt()*/38);
+            String numero = String.format("%03d", new java.util.Scanner(System.in).nextInt());
             String link = "https://swudb.com/card/" + espansione + "/" + numero;
             System.out.println("web scraping di " + link);
             driver = new WebDriverWithoutImage();
