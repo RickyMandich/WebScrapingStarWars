@@ -102,7 +102,7 @@ public class Carta{
             }
         }
         tipo = removeSlash(driver.findElement(By.cssSelector(".col-3.d-flex.align-items-center.justify-content-center span")));
-        List<WebElement> trait = driver.findElement(By.className("card-trait-text")).findElements(By.tagName("a"));
+        List<WebElement> trait = driver.findElements(By.className("card-trait-text")).getLast().findElements(By.tagName("a"));
         tratti = new String[0];
         for(WebElement t:trait){
             tratti = add(tratti, removeSlash(t));
@@ -223,9 +223,9 @@ public class Carta{
         WebDriver driver = null;
         try {
             System.out.println("inserisci l'espansione");
-            String espansione = /*new java.util.Scanner(System.in).nextLine()*/"ce24".toUpperCase();
+            String espansione = /*new java.util.Scanner(System.in).nextLine()*/"SHD".toUpperCase();
             System.out.println("inserisci il numero");
-            String numero = String.format("%03d", /*new java.util.Scanner(System.in).nextInt()*/5);
+            String numero = String.format("%03d", /*new java.util.Scanner(System.in).nextInt()*/38);
             String link = "https://swudb.com/card/" + espansione + "/" + numero;
             System.out.println("web scraping di " + link);
             driver = new WebDriverWithoutImage();
