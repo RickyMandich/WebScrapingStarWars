@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,21 +28,31 @@ public class Test {
         WebDriver driver = new ChromeDriver();
         try {
             driver.get("https://starwarsunlimited.com/it/cards");
+            ((JavascriptExecutor) driver).executeScript("document.body.style.zoom='25%'");
             int i = 0;
             do{
                 ((JavascriptExecutor) driver).executeScript("window.scrollBy(0,1000);");
                 i++;
             }while(driver.findElement(By.cssSelector("body")).getText().toLowerCase().contains("carica"));
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
-            WebElement cardImage = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("img[alt='Fronte Della Carta']")));
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cardImage);
-            ((JavascriptExecutor) driver).executeScript("window.scrollBy(0,-1000);");
-            try{
-                Thread.sleep(1000);
-            }catch (InterruptedException e){}
-            cardImage.click();
-            String url = driver.getCurrentUrl();
-            System.out.println(extractCid(url));
+
+            i=0;
+            List<WebElement> cardImages = driver.findElements(By.cssSelector("img[alt='Fronte Della Carta']"));
+            for (WebElement cardImage : cardImages) {
+                System.out.println("ho iniziato il ciclo");
+                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cardImage);
+                if (i==0) ((JavascriptExecutor) driver).executeScript("window.scrollBy(0,-1000);");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {}
+                cardImage.click();
+                String url = driver.getCurrentUrl();
+                i++;
+                System.out.println(i++ + ")\t" + extractCid(url));
+                wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+                wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("div.flex.gap-4.items-start button:last-child"))).click();
+                System.out.println("ho cliccato close");
+            }
         }finally {
             driver.quit();
         }
