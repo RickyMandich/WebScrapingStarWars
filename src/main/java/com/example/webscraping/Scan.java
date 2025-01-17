@@ -68,7 +68,7 @@ public class Scan {
             Exception exception = null;
             do{
                 try{
-                    driver.get("https://starwarsunlimited.com/it/cards");
+                    driver.get("https://swudb.com/sets/");
                 }catch (Exception ex){
                     exception = ex;
                 }
