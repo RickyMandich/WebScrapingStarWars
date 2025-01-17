@@ -3,7 +3,12 @@ package com.example.webscraping;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class Test {
     public static void main(String[] args) {
@@ -12,10 +17,17 @@ public class Test {
             driver.get("https://starwarsunlimited.com/it/cards");
             int i = 0;
             do{
-                System.out.println("attento il caricamento della pagina...");
+                if(i%1000==0) System.out.println("attento il caricamento della pagina...");
                 ((JavascriptExecutor) driver).executeScript("window.scrollBy(0,10000);");
                 i++;
             }while(driver.findElement(By.cssSelector("body")).getText().toLowerCase().contains("carica"));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebElement cardImage = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("img[alt='Fronte Della Carta']")));
+
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cardImage);
+            cardImage.click();
+
+            System.out.println(driver.getCurrentUrl());
         }finally {
             driver.quit();
         }
