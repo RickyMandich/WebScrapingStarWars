@@ -21,10 +21,17 @@ public class Test {
                 ((JavascriptExecutor) driver).executeScript("window.scrollBy(0,10000);");
                 i++;
             }while(driver.findElement(By.cssSelector("body")).getText().toLowerCase().contains("carica"));
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            System.out.println(driver.findElement(By.cssSelector("img[alt='Fronte Della Carta']")).getAttribute("outerHTML"));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
             WebElement cardImage = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("img[alt='Fronte Della Carta']")));
 
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cardImage);
+            ((JavascriptExecutor) driver).executeScript("window.scrollBy(0,-1000);");
+            try{
+                Thread.sleep(1000);
+            }catch (InterruptedException e){
+
+            }
             cardImage.click();
 
             System.out.println(driver.getCurrentUrl());
