@@ -29,6 +29,13 @@ public class Scan {
         return newArray;
     }
 
+    public static Long[] add(Long[] array, Long line){
+        Long[] newArray = new Long[array.length + 1];
+        System.arraycopy(array, 0, newArray, 0, array.length);
+        newArray[array.length] = line;
+        return newArray;
+    }
+
     public static boolean contains(Carta[] collezione, String espansione, String numero){
         for(Carta c:collezione){
             if(c.espansione.equals(espansione) && c.numero == Integer.parseInt(numero)) return true;
