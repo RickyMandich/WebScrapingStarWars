@@ -67,7 +67,7 @@ public class Test {
                         cid = Scan.add(cid, extractCid(url));
                         cardImages.remove(cardImage);
                     }
-                }catch (org.openqa.selenium.ElementClickInterceptedException ignore){}
+                }catch (org.openqa.selenium.ElementClickInterceptedException | org.openqa.selenium.JavascriptException ignore){}
             }
             System.out.println("ho usato " + j + " subList");
             String[] carte = new String[cid.length];
