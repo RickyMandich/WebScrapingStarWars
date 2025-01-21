@@ -7,6 +7,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +37,9 @@ public class Carta {
     static Map<String, String> uscitaEspansioni = new HashMap<>();
 
     public Carta(WebDriver driver) {
+        WebDriverWait wait = new WebDriverWait(driver, java.time.Duration.ofSeconds(100));
         cid = Test.extractCid(driver.getCurrentUrl());
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("h3.text-2xl.font-extrabold")));
         nome = driver.findElement(By.cssSelector("h3.text-2xl.font-extrabold")).getText();
         try {
             titolo = driver.findElement(By.cssSelector("p.text-neutral-400.italic")).getText();

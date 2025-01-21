@@ -5,12 +5,10 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.awt.*;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -24,7 +22,13 @@ public class Test {
         if (matcher.find()) {
             cid = matcher.group(1);
         }
-        return Long.parseLong(cid);
+        try{
+            return Long.parseLong(cid);
+        } catch (NumberFormatException e) {
+            System.out.println("url:\t" + url);
+            System.out.println("cid:\t" + cid);
+            throw e;
+        }
     }
 
     public static void main(String[] args) {
@@ -38,7 +42,6 @@ public class Test {
                 ((JavascriptExecutor) driver).executeScript("window.scrollBy(0,1000);");
                 i++;
             }while(driver.findElement(By.cssSelector("body")).getText().toLowerCase().contains("carica"));
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
 
             i=0;
             int j=0;
@@ -88,7 +91,7 @@ public class Test {
             boolean finito;
             if(carte.length == 0) finito = true;
             driver.quit();
-            int numeroThread = 4;
+            int numeroThread = 1;
             Carta[] collezione = new Carta[0];
             Elenchi elenco = new Elenchi(carte, numeroThread, collezione);
             elenco.carte.ready();
