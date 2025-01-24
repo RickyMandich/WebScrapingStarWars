@@ -47,6 +47,7 @@ public class Test {
             int j=0;
             Long[] cid = new Long[0];
             List<WebElement> cardImages = driver.findElements(By.cssSelector("img[alt='Fronte Della Carta']"));
+            Carta[] collezione = new Carta[0];
             while (cardImages.size() != 0) {
                 try{
                     j++;
@@ -60,6 +61,7 @@ public class Test {
                                 cardImage.click();
                                 continueLoop = true;
                             }else{
+                                Scan.add(collezione, new Carta(driver));
                                 closeWindow(driver);
                                 continueLoop = false;
                             }
@@ -88,32 +90,10 @@ public class Test {
             long tempoTrascorso = System.nanoTime() / 1000000;
             tempoTrascorso = tempoTrascorso - tempo;
             System.out.println("tempo trascorso:\t" + Scan.formattaSecondi(tempoTrascorso));
-            boolean finito;
-            if(carte.length == 0) finito = true;
             driver.quit();
-            int numeroThread = 1;
-            Carta[] collezione = new Carta[0];
-            Elenchi elenco = new Elenchi(carte, numeroThread, collezione);
-            elenco.carte.ready();
-            Thread[] processi = new Thread[numeroThread];
-            for (i = 0; i < processi.length; i++) {
-                processi[i] = new Thread(elenco, new WebDriverWithoutImage());
-                processi[i].start();
-            }
-            boolean fine = false;
-            while(!fine){
-                fine = true;
-                for(Thread t : processi){
-                    if (t.isAlive()) {
-                        fine = false;
-                        break;
-                    }
-                }
-            }
             tempoTrascorso = System.nanoTime() / 1000000;
             tempoTrascorso = tempoTrascorso - tempo;
             System.out.println("tempo trascorso:\t" + Scan.formattaSecondi(tempoTrascorso));
-            collezione = elenco.getResult();
             Toolkit.getDefaultToolkit().beep();
             String json = Scan.json(collezione);
             try(FileWriter writer = new FileWriter("collezione.json")){

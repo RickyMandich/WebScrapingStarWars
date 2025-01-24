@@ -49,6 +49,7 @@ public class Scan {
     }
 
     public static Carta[] add(Carta[] array, Carta line){
+        if(contains(array, line.espansione, String.valueOf(line.numero))) return array;
         Carta[] newArray = new Carta[array.length + 1];
         System.arraycopy(array, 0, newArray, 0, array.length);
         newArray[array.length] = line;
