@@ -52,6 +52,7 @@ public class Test {
                 try{
                     j++;
                     System.out.println("--------------------------------------------------------------------------------------------------------");
+                    System.out.println("tentativo " + j);
                     List<WebElement> subCardImages = new ArrayList<>(cardImages);
                     for (WebElement cardImage : subCardImages) {
                         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cardImage);

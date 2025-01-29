@@ -47,7 +47,7 @@ public class Carta {
         } catch (org.openqa.selenium.NoSuchElementException e) {
             unica = false;
         }
-        numero = Integer.parseInt(driver.findElement(By.cssSelector("html > body > div:nth-of-type(17) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(2) > div:nth-of-type(7) > span:nth-of-type(2)")).getText().split("/")[0]);
+        numero = Integer.parseInt(driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(2) > div:nth-of-type(7) > span:nth-of-type(2)")).getText().split("/")[0]);
         String[] aspetti = driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > span:nth-of-type(2)")).getText().split(", ");
         if(aspetti.length > 0) aspettoPrimario = traduciAspetto(aspetti[0]);
         if(aspetti.length > 1) aspettoSecondario = traduciAspetto(aspetti[1]);
@@ -61,7 +61,7 @@ public class Carta {
         rarita = driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(4) > span:nth-of-type(2)")).getText();
         artista = driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6) > span:nth-of-type(2)")).getText();
         driver.get("https://starwarsunlimited.com/it/cards?cid="+ cid +"#collection");
-        espansione = driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(2) > div > table > tbody > tr:nth-of-type(1) > th > span:nth-of-type(2)")).getText();
+        espansione = driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(2) > div > table > tbody > tr:nth-of-type(1) > th > span:nth-of-type(2) > span")).getText();
     }
 
     public static String traduciAspetto(String aspetto){
