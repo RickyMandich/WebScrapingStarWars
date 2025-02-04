@@ -85,13 +85,11 @@ public class Test {
                     writer.write(i++ + ")\t" + (i<100?"\t":"") + c + "\n");
                 }
             }catch (IOException ignore){}
-            for (String c : carte) {
-                System.out.println(c);
-            }
             long tempoTrascorso = System.nanoTime() / 1000000;
             tempoTrascorso = tempoTrascorso - tempo;
             System.out.println("tempo trascorso:\t" + Scan.formattaSecondi(tempoTrascorso));
             driver.quit();
+
             tempoTrascorso = System.nanoTime() / 1000000;
             tempoTrascorso = tempoTrascorso - tempo;
             System.out.println("tempo trascorso:\t" + Scan.formattaSecondi(tempoTrascorso));

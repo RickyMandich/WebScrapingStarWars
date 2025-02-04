@@ -47,7 +47,7 @@ public class Carta {
         } catch (org.openqa.selenium.NoSuchElementException e) {
             unica = false;
         }
-        numero = Integer.parseInt(driver.findElement(By.xpath("/html/body/div[21]/div/div/div/div[2]/div/div[3]/div[1]/div[6]/div[2]/div[7]/span[2]")).getText().split("/")[0]);
+        numero = Integer.parseInt(driver.findElement(By.xpath("/html/body/div[13]/div/div/div/div[2]/div/div[3]/div[1]/div[6]/div[2]/div[7]/span[2]")).getText().split("/")[0]);
         String[] aspetti = driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > span:nth-of-type(2)")).getText().split(", ");
         if(aspetti.length > 0) aspettoPrimario = traduciAspetto(aspetti[0]);
         if(aspetti.length > 1) aspettoSecondario = traduciAspetto(aspetti[1]);
@@ -169,15 +169,19 @@ public class Carta {
     }
 
     public static void main(String[] args) {
-        long cid = getLong("inserisci il cid (Carta ID) della carta che vuoi cercare");
+        boolean close = Scan.getBoolean("vuoi chiudere il browser alla fine?");
+        //insert another `*` on the first one to switch from the static to the dinamic input
+        String cid = /*/String.valueOf(getLong("inserisci il cid (Carta ID) della carta che vuoi cercare"));/*/"4179470615";/**/
         WebDriver driver = new ChromeDriver();
         System.out.println();
         driver.get("https://starwarsunlimited.com/it/cards?cid=" + cid);
-        try{
+        try {
+            Thread.sleep(3000);
             Carta carta = new Carta(driver);
             System.out.println(carta);
+        }catch (InterruptedException ignore){
         }finally {
-            driver.quit();
+            if(close) driver.quit();
         }
     }
 }

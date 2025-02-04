@@ -345,6 +345,20 @@ public class Scan {
         return getString();
     }
 
+    public static boolean getBoolean(String message){
+        System.out.println(message);
+        return getBoolean();
+    }
+
+    public static boolean getBoolean(){
+        try{
+            return new Scanner(System.in).nextBoolean();
+        }catch (java.util.InputMismatchException e){
+            System.out.println("Errore: inserisci un boolean nella forma `true` o `false`");
+            return getBoolean();
+        }
+    }
+
     public static void uploadWithFtp(String filePath){
         FTPClient ftp = new FTPClient();
         try {
