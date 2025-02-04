@@ -10,6 +10,7 @@ public class Thread extends java.lang.Thread {
         this.link = link;
         this.driver = driver;
     }
+
     @Override
     public void run() {
         String line;

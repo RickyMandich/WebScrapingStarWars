@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -40,28 +41,32 @@ public class Carta {
         WebDriverWait wait = new WebDriverWait(driver, java.time.Duration.ofSeconds(100));
         cid = Test.extractCid(driver.getCurrentUrl());
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("h3.text-2xl.font-extrabold")));
-        nome = driver.findElement(By.cssSelector("h3.text-2xl.font-extrabold")).getText();
+        nome = driver.findElements(By.cssSelector("h3.text-2xl.font-extrabold")).getFirst().getText();
         try {
-            titolo = driver.findElement(By.cssSelector("p.text-neutral-400.italic")).getText();
+            titolo = driver.findElements(By.cssSelector("p.text-neutral-400.italic")).getFirst().getText();
             unica = true;
         } catch (org.openqa.selenium.NoSuchElementException e) {
             unica = false;
         }
-        numero = Integer.parseInt(driver.findElement(By.xpath("/html/body/div[13]/div/div/div/div[2]/div/div[3]/div[1]/div[6]/div[2]/div[7]/span[2]")).getText().split("/")[0]);
-        String[] aspetti = driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > span:nth-of-type(2)")).getText().split(", ");
+        try{
+            this.numero = Integer.parseInt(driver.findElements(By.xpath("/html/body/div[13]/div/div/div/div[2]/div/div[3]/div[1]/div[6]/div[2]/div[7]/span[2]")).getFirst().getText().split("/")[0]);
+        }catch (java.util.NoSuchElementException e){
+            System.out.println(driver.findElements(By.xpath("/html/body/div[13]/div/div/div/div[2]/div/div[3]/div[1]/div[6]/div[2]/div[7]/span[2]")).size());
+        }
+        String[] aspetti = driver.findElements(By.xpath("/html/body/div[13]/div/div/div/div[2]/div/div[3]/div[1]/div[6]/div[1]/div[1]/span[2]")).getFirst().getText().split(", ");
         if(aspetti.length > 0) aspettoPrimario = traduciAspetto(aspetti[0]);
         if(aspetti.length > 1) aspettoSecondario = traduciAspetto(aspetti[1]);
-        tipo = driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > span:nth-of-type(2)")).getText();
-        tratti = driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3) > span:nth-of-type(2)")).getText().split(", ");
-        descrizione = driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div")).getText();
-        arena = driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > span:nth-of-type(2)")).getText();
-        costo = Integer.parseInt(driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(2)")).getText());
-        vita = Integer.parseInt(driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(5) > span:nth-of-type(2)")).getText());
-        potenza = Integer.parseInt(driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(4) > span:nth-of-type(2)")).getText());
-        rarita = driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(4) > span:nth-of-type(2)")).getText();
-        artista = driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6) > span:nth-of-type(2)")).getText();
+        tipo = driver.findElements(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > span:nth-of-type(2)")).getFirst().getText();
+        tratti = driver.findElements(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3) > span:nth-of-type(2)")).getFirst().getText().split(", ");
+        descrizione = driver.findElements(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div")).getFirst().getText();
+        arena = driver.findElements(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > span:nth-of-type(2)")).getFirst().getText();
+        costo = Integer.parseInt(driver.findElements(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(2)")).getFirst().getText());
+        vita = Integer.parseInt(driver.findElements(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(5) > span:nth-of-type(2)")).getFirst().getText());
+        potenza = Integer.parseInt(driver.findElements(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(4) > span:nth-of-type(2)")).getFirst().getText());
+        rarita = driver.findElements(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(4) > span:nth-of-type(2)")).getFirst().getText();
+        artista = driver.findElements(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(6) > span:nth-of-type(2)")).getFirst().getText();
         driver.get("https://starwarsunlimited.com/it/cards?cid="+ cid +"#collection");
-        espansione = driver.findElement(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(2) > div > table > tbody > tr:nth-of-type(1) > th > span:nth-of-type(2) > span")).getText();
+        espansione = driver.findElements(By.cssSelector("html > body > div:nth-of-type(21) > div > div > div > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(2) > div > table > tbody > tr:nth-of-type(1) > th > span:nth-of-type(2) > span")).getFirst().getText();
     }
 
     public static String traduciAspetto(String aspetto){

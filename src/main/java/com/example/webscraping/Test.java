@@ -47,7 +47,6 @@ public class Test {
             int j=0;
             Long[] cid = new Long[0];
             List<WebElement> cardImages = driver.findElements(By.cssSelector("img[alt='Fronte Della Carta']"));
-            Carta[] collezione = new Carta[0];
             while (cardImages.size() != 0) {
                 try{
                     j++;
@@ -62,7 +61,6 @@ public class Test {
                                 cardImage.click();
                                 continueLoop = true;
                             }else{
-                                Scan.add(collezione, new Carta(driver));
                                 closeWindow(driver);
                                 continueLoop = false;
                             }
@@ -89,7 +87,9 @@ public class Test {
             tempoTrascorso = tempoTrascorso - tempo;
             System.out.println("tempo trascorso:\t" + Scan.formattaSecondi(tempoTrascorso));
             driver.quit();
-
+            List<Carta> collezione = new ArrayList<>();
+            ThreadIta t = new ThreadIta(carte, collezione);
+            t.start();
             tempoTrascorso = System.nanoTime() / 1000000;
             tempoTrascorso = tempoTrascorso - tempo;
             System.out.println("tempo trascorso:\t" + Scan.formattaSecondi(tempoTrascorso));
