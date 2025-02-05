@@ -43,7 +43,7 @@ public class Test {
                 i++;
             }while(driver.findElement(By.cssSelector("body")).getText().toLowerCase().contains("carica"));
 
-            i=0;
+            i=1;
             int j=0;
             Long[] cid = new Long[0];
             List<WebElement> cardImages = driver.findElements(By.cssSelector("img[alt='Fronte Della Carta']"));
@@ -66,10 +66,11 @@ public class Test {
                             }
                         }
                         String url = driver.getCurrentUrl();
-                        i++;
-                        System.out.println(i + ")\t" + (i<100?"\t":"") + extractCid(url));
-                        cid = Scan.add(cid, extractCid(url));
-                        cardImages.remove(cardImage);
+                        try{
+                            System.out.println(i + ")\t" + (i++<100?"\t":"") + extractCid(url));
+                            cid = Scan.add(cid, extractCid(url));
+                            cardImages.remove(cardImage);
+                        }catch (NumberFormatException ignore){}
                     }
                 }catch (org.openqa.selenium.ElementClickInterceptedException | org.openqa.selenium.JavascriptException ignore){}
             }
