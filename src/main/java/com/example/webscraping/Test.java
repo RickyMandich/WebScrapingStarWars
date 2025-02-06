@@ -5,6 +5,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.awt.*;
 import java.io.FileWriter;
@@ -32,7 +33,9 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        WebDriver driver = new ChromeDriver();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless"); // Esegue Chrome in modalità headless
+        WebDriver driver = new ChromeDriver(options);
         long tempo  = System.nanoTime() / 1000000;
         try {
             driver.get("https://starwarsunlimited.com/it/cards");

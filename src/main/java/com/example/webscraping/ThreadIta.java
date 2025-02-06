@@ -2,6 +2,7 @@ package com.example.webscraping;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,9 @@ public class ThreadIta extends java.lang.Thread{
     public void run() {
         while (!str.isEmpty()){
             String url = str.getFirst();
-            WebDriver driver = new ChromeDriver();
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--headless"); // Esegue Chrome in modalità headless
+            WebDriver driver = new ChromeDriver(options);
             driver.get(url);
             try{
                 Carta carta = new Carta(driver);
