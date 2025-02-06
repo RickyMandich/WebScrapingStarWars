@@ -69,6 +69,7 @@ public class Scan {
             do{
                 try{
                     driver.get("https://swudb.com/sets/");
+                    //css per ottenere il link fullset "a[href*=fullSet]"
                 }catch (Exception ex){
                     exception = ex;
                 }
