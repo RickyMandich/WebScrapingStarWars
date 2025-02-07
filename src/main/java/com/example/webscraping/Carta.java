@@ -7,7 +7,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,23 +34,29 @@ public class Carta{
     int vita;
     int potenza;
     String rarita = "";
-    double prezzo;
     String artista = "";
 
     static Map<String, String> uscitaEspansioni = new HashMap<>();
 
-    public Carta(WebDriver driver){
-        nome = removeSlash(driver.findElement(By.className("col")).findElement(By.tagName("h4")));
+    public Carta(WebDriver driver, boolean verbose){
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        nome = removeSlash(wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("h1.text-center.text-2xl"))));
+        if(verbose) System.out.println("nome:\t" + nome);
         unica = nome.startsWith("⟡ ");
+        if(verbose) System.out.println("unica:\t" + unica);
         nome = nome.substring(unica ? 2 : 0);
         try{
-            titolo = removeSlash(driver.findElement(By.className("card-title")));
+            titolo = removeSlash(driver.findElement(By.cssSelector(".mt-1.text-center")));
         }catch (NoSuchElementException e){
             titolo = "";
         }
+        if(verbose) System.out.println("titolo:\t" + titolo);
         espansione = StringUtils.substringBetween(removeSlash(driver.findElement(By.className("card-expansion-name"))), "(", ")");
+        if(verbose) System.out.println("espansione:\t" + espansione);
         uscita = uscitaEspansioni.get(espansione);
+        if(verbose) System.out.println("uscita:\t" + uscita);
         numero = Integer.parseInt(StringUtils.substringBetween(removeSlash(driver.findElement(By.className("card-expansion-header")).findElement(By.tagName("span"))), "#", "•").replace(" ", ""));
+        if(verbose) System.out.println("numero:\t" + numero);
         List<WebElement> aspetti = driver.findElements(By.cssSelector("div>.card-stats-aspect"));
         boolean primoAspetto = true;
         for(WebElement aspect : aspetti){
@@ -96,12 +105,16 @@ public class Carta{
                     }else aspettoSecondario = aspetto;
             }
         }
+        if(verbose) System.out.println("aspettoPrimario:\t" + aspettoPrimario);
+        if(verbose) System.out.println("aspettoSecondario:\t" + aspettoSecondario);
         tipo = removeSlash(driver.findElement(By.cssSelector(".col-3.d-flex.align-items-center.justify-content-center span")));
+        if(verbose) System.out.println("tipo:\t" + tipo);
         List<WebElement> trait = driver.findElement(By.className("card-trait-text")).findElements(By.tagName("a"));
         tratti = new String[0];
         for(WebElement t:trait){
             tratti = add(tratti, removeSlash(t));
         }
+        if(verbose) System.out.println("tratti:\t" + Scan.join(tratti, " * "));
         List<WebElement> ability = driver.findElements(By.className("card-ability-text"));
         for(WebElement a:ability){
             List<WebElement> abilita = a.findElements(By.tagName("p"));
@@ -128,32 +141,35 @@ public class Carta{
                 descrizione = descrizione.concat("ability:"+ innerHTML);
             }
         }
+        if(verbose) System.out.println("descrizione:\n" + descrizione);
         try{
             arena = removeSlash(driver.findElement(By.cssSelector(".card-stats-arena-box>span")));
         }catch (NoSuchElementException e){
             arena = "";
         }
+        if(verbose) System.out.println("arena:\t" + arena);
         try{
             costo = Integer.parseInt(removeSlash(driver.findElement(By.cssSelector("div.card-info-box>div.row.card-stats-row>div.col-3.card-resources.d-flex.align-items-center.justify-content-center"))));
         }catch (NoSuchElementException|NumberFormatException e){
             costo = 0;
         }
+        if(verbose) System.out.println("costo:\t" + costo);
         try{
             vita = Integer.parseInt(removeSlash(driver.findElement(By.className("card-hp"))));
         }catch (NoSuchElementException|NumberFormatException e){
             vita = 0;
         }
+        if(verbose) System.out.println("vita:\t" + vita);
         try{
             potenza = Integer.parseInt(removeSlash(driver.findElement(By.className("card-power"))));
-        }catch (NoSuchElementException|NumberFormatException ignored){}
-        rarita = removeSlash(driver.findElement(By.cssSelector(".card-expansion-header span"))).split(" • ")[1];
-        List<WebElement> prezzi = driver.findElements(By.cssSelector(".container>.row.mt-1>.col.px-0>a"));
-        for(WebElement p:prezzi){
-            try{
-                prezzo = Double.parseDouble(removeSlash(p).split("\\$")[1]);
-            }catch (ArrayIndexOutOfBoundsException ignore){}
+        }catch (NoSuchElementException|NumberFormatException ignored){
+            potenza = 0;
         }
+        if(verbose) System.out.println("potenza:\t" + potenza);
+        rarita = removeSlash(driver.findElement(By.cssSelector(".card-expansion-header span"))).split(" • ")[1];
+        if(verbose) System.out.println("rarita:\t" + rarita);
         artista = removeSlash(driver.findElement(By.cssSelector(".card-stats-artist>a")));
+        if(verbose) System.out.println("artista:\t" + artista);
     }
 
     public Carta(String jsonString) {
@@ -173,7 +189,6 @@ public class Carta{
         this.vita = jsonObject.get("vita").getAsInt();
         this.potenza = jsonObject.get("potenza").getAsInt();
         this.rarita = jsonObject.get("rarita").getAsString();
-        this.prezzo = jsonObject.get("prezzo").getAsDouble();
         this.artista = jsonObject.get("artista").getAsString();
     }
 
@@ -207,7 +222,6 @@ public class Carta{
         info += "vita:\t" + vita + "\n";
         info += "potenza:\t" + potenza + "\n";
         info += "rarita:\t" + rarita + "\n";
-        info += "prezzo:\t" + prezzo + "\n";
         info += "artista:\t" + artista + "\n";
         return info;
     }
@@ -225,7 +239,7 @@ public class Carta{
             System.out.println("web scraping di " + link);
             driver = new WebDriverWithoutImage();
             driver.get(link);
-            Carta c = new Carta(driver);
+            Carta c = new Carta(driver, true);
             System.out.println(c);
             System.out.println(new Gson().toJson(c));
         }catch (Exception e){

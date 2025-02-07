@@ -7,12 +7,15 @@ import org.apache.http.impl.client.HttpClients;
 import org.openqa.selenium.*;
 
 import com.google.gson.Gson;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.awt.*;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.*;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -74,7 +77,8 @@ public class Scan {
                     exception = ex;
                 }
             }while(exception instanceof TimeoutException);
-            List<WebElement> completeSetRow = driver.findElements(By.cssSelector("div.col-span-1.md\\:col-span-3"));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            List<WebElement> completeSetRow = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("div.col-span-1.md\\:col-span-3")));
             for(WebElement csr : completeSetRow){
                 String set = csr.findElement(By.tagName("a")).getAttribute("href").split("/")[4];
                 String uscita = csr.findElement(By.tagName("p")).getText().replace("Release Date: ", "");
@@ -96,7 +100,7 @@ public class Scan {
                 System.out.println("ora scansiono " + set);
                 Toolkit.getDefaultToolkit().beep();
                 try{
-                    driver.get("https://swudb.com/sets/" + set);
+                    driver.get("https://swudb.com/sets/" + set + "fullSet");
                 } catch (Exception e) {
                     espansioni = add(espansioni, set);
                 }
@@ -207,7 +211,7 @@ public class Scan {
         return String.format("%02d", ore) + ":" + String.format("%02d", minuti) + ":" + String.format("%02d", secondi);
     }
 
-    private static String elaboraData(String uscita){
+    public static String elaboraData(String uscita){
         Matcher release = Pattern.compile("([A-Z][a-z]*)? ?([0-9]{1,2})?,? ?([0-9]{4})").matcher(uscita);
         String data = "";
         if(release.find()){
