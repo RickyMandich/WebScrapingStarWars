@@ -20,6 +20,10 @@ import java.time.Duration;
 import java.util.*;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +54,30 @@ public class Scan {
         System.arraycopy(array, 0, newArray, 0, array.length);
         newArray[array.length] = line;
         return newArray;
+    }
+
+    public static int readIntWithTimeout(Duration timeout, int defaultValue) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<Integer> future = executor.submit(() -> {
+            try {
+                Scanner scanner = new Scanner(System.in);
+                return scanner.nextInt();
+            } catch (Exception e) {
+                return defaultValue;
+            }
+        });
+
+        try {
+            return future.get(timeout.getSeconds(), TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
+            future.cancel(true);
+            return defaultValue;
+        } catch (Exception e) {
+            return defaultValue;
+        } finally {
+            executor.shutdownNow();
+            System.out.println("chiusura scanner");
+        }
     }
 
     public static void main(String[] args){
@@ -134,7 +162,7 @@ public class Scan {
             driver.quit();
             if (!finito) {
                 System.out.println("quanti thread vuoi lanciare?\t\t(se le carte sono più dei thread, verranno lanciati tanti thread quanti sono le carte)");
-                numeroThread = Math.min(new Scanner(System.in).nextInt(), carte.length);
+                numeroThread = Math.min(readIntWithTimeout(Duration.ofSeconds(60), 4), carte.length);
                 tempo = System.nanoTime() / 1000000;
                 carte = orderAndCompact(carte);
                 Elenchi elenco = new Elenchi(carte, numeroThread, collezione);
