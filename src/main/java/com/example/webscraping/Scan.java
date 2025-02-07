@@ -74,22 +74,10 @@ public class Scan {
                     exception = ex;
                 }
             }while(exception instanceof TimeoutException);
-            List<WebElement> tabelle = driver.findElements(By.tagName("tbody"));
-            List<WebElement> row = new ArrayList<>();
-            for(WebElement table:tabelle){
-                row.addAll(table.findElements(By.tagName("tr")));
-            }
-            for(WebElement r:row){
-                String set = r.findElement(By.cssSelector(".ms-3.small.text-muted")).getText();
-                String uscita = r.findElement(By.cssSelector("td:last-child span")).getText();
-                Carta.uscitaEspansioni.put(set, elaboraData(uscita));
-            }
-            List<WebElement> completeSetRow = driver.findElements(By.cssSelector(".col-12.col-md-8.mt-2.mt-md-4"));
+            List<WebElement> completeSetRow = driver.findElements(By.cssSelector("div.col-span-1.md\\:col-span-3"));
             for(WebElement csr : completeSetRow){
-                String href = csr.findElement(By.cssSelector(".core-set-title>a")).getAttribute("href");
-                String set = href.split("/")[href.split("/").length - 1];
-                String uscita = csr.findElement(By.cssSelector("span[title=\"Release Date\"]>em")).getText();
-                if(uscita.split(" ")[0].startsWith("Q")) uscita = uscita.split(" ")[1];
+                String set = csr.findElement(By.tagName("a")).getAttribute("href").split("/")[4];
+                String uscita = csr.findElement(By.tagName("p")).getText().replace("Release Date: ", "");
                 Carta.uscitaEspansioni.put(set, elaboraData(uscita));
             }
             driver.quit();
