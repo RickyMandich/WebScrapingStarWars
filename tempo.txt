@@ -23,3 +23,7 @@
 	2025 02 07 13:54:12	thread: 0	tempo trascorso:	00:00:07	set:	CE24 - GGTS - JTL - SHD - SOR - TWI
 	2025 02 07 13:56:32	thread: 0	tempo trascorso:	00:00:14	set:	CE24 - GGTS - JTL - SHD - SOR - TWI
 	2025 02 07 14:00:02	thread: 4	tempo trascorso:	00:03:53	set:	CE24 - GGTS - JTL - SHD - SOR - TWI
+	2025 02 07 19:41:09	thread: 4	tempo trascorso:	00:16:47	set:	CE24 - GGTS - JTL - SHD - SOR - TWI
+	2025 02 07 19:58:30	thread: 4	tempo trascorso:	00:17:11	set:	CE24 - GGTS - JTL - SHD - SOR - TWI
+	2025 02 07 20:13:02	thread: 4	tempo trascorso:	00:00:04	set:	CE24 - GGTS - JTL - SHD - SOR - TWI
+	2025 02 07 20:13:35	thread: 4	tempo trascorso:	00:00:08	set:	CE24 - GGTS - JTL - SHD - SOR - TWI

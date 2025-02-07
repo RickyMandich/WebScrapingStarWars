@@ -107,10 +107,10 @@ public class Scan {
                 }
                 System.out.println("ora tocca al wait");
                 wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-                List<WebElement> elements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("img[alt*='Default Card Name']")));
+                List<WebElement> elements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("div.flex.justify-center a")));
                 System.out.println("trovate " + elements.size() + " carte");
                 for (WebElement e : elements) {
-                    String url = e.getAttribute("src");
+                    String url = e.getAttribute("href");
                     System.out.println("analizzo la carta " + url);
                     String regex = "[A-Z]{2,6}([0-9]{2})?\\/[0-9]{1,3}";
                     System.out.println(regex);
@@ -132,28 +132,30 @@ public class Scan {
             }
             if (carte.length == 0) finito = true;
             driver.quit();
-            System.out.println("quanti thread vuoi lanciare?");
-            numeroThread = new Scanner(System.in).nextInt();
-            tempo = System.nanoTime() / 1000000;
-            carte = orderAndCompact(carte);
-            Elenchi elenco = new Elenchi(carte, numeroThread, collezione);
-            elenco.carte.ready();
-            Thread[] processi = new Thread[numeroThread];
-            for (int i = 0; i < processi.length; i++) {
-                processi[i] = new Thread(elenco, new WebDriverWithoutImage());
-                processi[i].start();
-            }
-            boolean fine = false;
-            while (!fine) {
-                fine = true;
-                for (Thread t : processi) {
-                    if (t.isAlive()) {
-                        fine = false;
-                        break;
+            if (!finito) {
+                System.out.println("quanti thread vuoi lanciare?\t\t(se le carte sono più dei thread, verranno lanciati tanti thread quanti sono le carte)");
+                numeroThread = Math.min(new Scanner(System.in).nextInt(), carte.length);
+                tempo = System.nanoTime() / 1000000;
+                carte = orderAndCompact(carte);
+                Elenchi elenco = new Elenchi(carte, numeroThread, collezione);
+                elenco.carte.ready();
+                Thread[] processi = new Thread[numeroThread];
+                for (int i = 0; i < processi.length; i++) {
+                    processi[i] = new Thread(elenco, new WebDriverWithoutImage());
+                    processi[i].start();
+                }
+                boolean fine = false;
+                while (!fine) {
+                    fine = true;
+                    for (Thread t : processi) {
+                        if (t.isAlive()) {
+                            fine = false;
+                            break;
+                        }
                     }
                 }
+                collezione = elenco.getResult();
             }
-            collezione = elenco.getResult();
         }catch (Exception e){
             e.printStackTrace();
         } finally {
