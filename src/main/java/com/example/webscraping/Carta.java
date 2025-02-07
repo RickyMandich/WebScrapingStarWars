@@ -38,6 +38,10 @@ public class Carta{
 
     static Map<String, String> uscitaEspansioni = new HashMap<>();
 
+    public Carta(WebDriver driver){
+        this(driver, false);
+    }
+
     public Carta(WebDriver driver, boolean verbose){
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         nome = removeSlash(wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("h1.text-center.text-2xl"))));
@@ -51,48 +55,48 @@ public class Carta{
             titolo = "";
         }
         if(verbose) System.out.println("titolo:\t" + titolo);
-        espansione = StringUtils.substringBetween(removeSlash(driver.findElement(By.className("card-expansion-name"))), "(", ")");
+        espansione = StringUtils.substringBetween(removeSlash(driver.findElement(By.cssSelector("h1.text-2xl.text-gray-50.dark\\:text-gray-950"))), "(", ")");
         if(verbose) System.out.println("espansione:\t" + espansione);
         uscita = uscitaEspansioni.get(espansione);
         if(verbose) System.out.println("uscita:\t" + uscita);
-        numero = Integer.parseInt(StringUtils.substringBetween(removeSlash(driver.findElement(By.className("card-expansion-header")).findElement(By.tagName("span"))), "#", "•").replace(" ", ""));
+        numero = Integer.parseInt(StringUtils.substringBetween(removeSlash(driver.findElement(By.cssSelector("div.text-md.font-light"))), "#", "•").replace(" ", ""));
         if(verbose) System.out.println("numero:\t" + numero);
-        List<WebElement> aspetti = driver.findElements(By.cssSelector("div>.card-stats-aspect"));
+        List<WebElement> aspetti = driver.findElements(By.cssSelector("img[alt*='Aspect']"));
         boolean primoAspetto = true;
         for(WebElement aspect : aspetti){
-            String aspetto = aspect.getAttribute("alt").replace(" Aspect", "");
+            String aspetto = aspect.getAttribute("alt").replace("Aspect ", "");
             switch (aspetto){
-                case "Vigilance":
+                case "4":
                     if(primoAspetto){
                         primoAspetto = false;
                         aspettoPrimario = "Blue";
                     }else aspettoSecondario = "Blue";
                     break;
-                case "Command":
+                case "2":
                     if(primoAspetto){
                         primoAspetto = false;
                         aspettoPrimario = "Green";
                     }else aspettoSecondario = "Green";
                     break;
-                case "Aggression":
+                case "1":
                     if(primoAspetto){
                         primoAspetto = false;
                         aspettoPrimario = "Red";
                     }else aspettoSecondario = "Red";
                     break;
-                case "Cunning":
+                case "3":
                     if(primoAspetto){
                         primoAspetto = false;
                         aspettoPrimario = "Yellow";
                     }else aspettoSecondario = "Yellow";
                     break;
-                case "Heroism":
+                case "5":
                     if(primoAspetto){
                         primoAspetto = false;
                         aspettoPrimario = "Light";
                     }else aspettoSecondario = "Light";
                     break;
-                case "Villainy":
+                case "6":
                     if(primoAspetto){
                         primoAspetto = false;
                         aspettoPrimario = "Dark";
@@ -107,25 +111,32 @@ public class Carta{
         }
         if(verbose) System.out.println("aspettoPrimario:\t" + aspettoPrimario);
         if(verbose) System.out.println("aspettoSecondario:\t" + aspettoSecondario);
-        tipo = removeSlash(driver.findElement(By.cssSelector(".col-3.d-flex.align-items-center.justify-content-center span")));
+        tipo = removeSlash(driver.findElement(By.cssSelector("#rules-box > div:nth-child(2) > div.items-center.text-center.font-normal > div:nth-child(1)")));
         if(verbose) System.out.println("tipo:\t" + tipo);
-        List<WebElement> trait = driver.findElement(By.className("card-trait-text")).findElements(By.tagName("a"));
+        List<WebElement> trait = driver.findElement(By.cssSelector("a[href*='/tr']")).findElements(By.tagName("a"));
         tratti = new String[0];
         for(WebElement t:trait){
             tratti = add(tratti, removeSlash(t));
         }
         if(verbose) System.out.println("tratti:\t" + Scan.join(tratti, " * "));
-        List<WebElement> ability = driver.findElements(By.className("card-ability-text"));
+        List<WebElement> ability = driver.findElements(By.cssSelector("div[id*='ability-text-box']"));
         for(WebElement a:ability){
+            if(ability.size() > 1){
+                if(a.equals(ability.getFirst())){
+                    descrizione = descrizione.concat("non schierato:\n");
+                }else{
+                    descrizione = descrizione.concat("schierato:\n");
+                }
+            }
             List<WebElement> abilita = a.findElements(By.tagName("p"));
             for(WebElement p:abilita) {
                 String innerHTML = p.getAttribute("innerHTML").replace("<i class=\"fa-solid fa-turn-down fa-rotate-270 ps-1\"></i>", "->");
-                innerHTML = innerHTML.replace("<img src=\"/images/Vigilance.png\" class=\"card-stats-aspect line-height\" alt=\"Vigilance Aspect\">", "B");
-                innerHTML = innerHTML.replace("<img src=\"/images/Command.png\" class=\"card-stats-aspect line-height\" alt=\"Command Aspect\">", "G");
-                innerHTML = innerHTML.replace("<img src=\"/images/Aggression.png\" class=\"card-stats-aspect line-height\" alt=\"Aggression Aspect\">", "R");
-                innerHTML = innerHTML.replace("<img src=\"/images/Cunning.png\" class=\"card-stats-aspect line-height\" alt=\"Cunning Aspect\">", "Y");
-                innerHTML = innerHTML.replace("<img src=\"/images/Villainy.png\" class=\"card-stats-aspect line-height\" alt=\"Villainy Aspect\">", "D");
-                innerHTML = innerHTML.replace("<img src=\"/images/Heroism.png\" class=\"card-stats-aspect line-height\" alt=\"Heroism Aspect\">", "W");
+                innerHTML = innerHTML.replace("<img src=\"/images/Vigilance.png\" class=\"card-stats-aspect line-height\" alt=\"Aspect 4\">", "B");
+                innerHTML = innerHTML.replace("<img src=\"/images/Command.png\" class=\"card-stats-aspect line-height\" alt=\"Aspect 2\">", "G");
+                innerHTML = innerHTML.replace("<img src=\"/images/Aggression.png\" class=\"card-stats-aspect line-height\" alt=\"Aspect 1\">", "R");
+                innerHTML = innerHTML.replace("<img src=\"/images/Cunning.png\" class=\"card-stats-aspect line-height\" alt=\"Aspect 3\">", "Y");
+                innerHTML = innerHTML.replace("<img src=\"/images/Villainy.png\" class=\"card-stats-aspect line-height\" alt=\"Aspect 5\">", "D");
+                innerHTML = innerHTML.replace("<img src=\"/images/Heroism.png\" class=\"card-stats-aspect line-height\" alt=\"Aspect 6\">", "W");
                 innerHTML = innerHTML.replace("</span>", "");
                 Pattern pspan = Pattern.compile("<span.*?>");
                 Matcher mspan = pspan.matcher(innerHTML);
@@ -138,37 +149,37 @@ public class Carta{
                 innerHTML = innerHTML.replace("</em>", "");
                 innerHTML = innerHTML.replace("<strong>", "");
                 innerHTML = innerHTML.replace("</strong>", "");
-                descrizione = descrizione.concat("ability:"+ innerHTML);
+                descrizione = descrizione.concat((ability.size() > 1 ? "\t":"") + "ability:" + innerHTML + "\n");
             }
         }
         if(verbose) System.out.println("descrizione:\n" + descrizione);
         try{
-            arena = removeSlash(driver.findElement(By.cssSelector(".card-stats-arena-box>span")));
+            arena = removeSlash(driver.findElement(By.cssSelector("#rules-box > div:nth-child(2) > div.items-center.text-center.font-normal > div:nth-child(2) > div:nth-child(2)")));
         }catch (NoSuchElementException e){
             arena = "";
         }
         if(verbose) System.out.println("arena:\t" + arena);
         try{
-            costo = Integer.parseInt(removeSlash(driver.findElement(By.cssSelector("div.card-info-box>div.row.card-stats-row>div.col-3.card-resources.d-flex.align-items-center.justify-content-center"))));
+            costo = Integer.parseInt(removeSlash(driver.findElement(By.cssSelector("span.text-3xl.text-yellow-400"))));
         }catch (NoSuchElementException|NumberFormatException e){
             costo = 0;
         }
         if(verbose) System.out.println("costo:\t" + costo);
         try{
-            vita = Integer.parseInt(removeSlash(driver.findElement(By.className("card-hp"))));
+            vita = Integer.parseInt(removeSlash(driver.findElement(By.cssSelector("span.text-3xl.text-blue-700"))));
         }catch (NoSuchElementException|NumberFormatException e){
             vita = 0;
         }
         if(verbose) System.out.println("vita:\t" + vita);
         try{
-            potenza = Integer.parseInt(removeSlash(driver.findElement(By.className("card-power"))));
+            potenza = Integer.parseInt(removeSlash(driver.findElement(By.cssSelector("span.text-3xl.text-red-700"))));
         }catch (NoSuchElementException|NumberFormatException ignored){
             potenza = 0;
         }
         if(verbose) System.out.println("potenza:\t" + potenza);
-        rarita = removeSlash(driver.findElement(By.cssSelector(".card-expansion-header span"))).split(" • ")[1];
+        rarita = StringUtils.substringBetween(removeSlash(driver.findElement(By.cssSelector("div.text-md.font-light"))), "• ", " •").replace(" ", "");
         if(verbose) System.out.println("rarita:\t" + rarita);
-        artista = removeSlash(driver.findElement(By.cssSelector(".card-stats-artist>a")));
+        artista = removeSlash(driver.findElement(By.cssSelector("a[href*='/artist']")));
         if(verbose) System.out.println("artista:\t" + artista);
     }
 
@@ -229,22 +240,21 @@ public class Carta{
 
 
     public static void main(String[] args){
-        WebDriver driver = null;
+        WebDriver driver = new WebDriverWithoutImage();
         try {
             System.out.println("inserisci l'espansione");
-            String espansione = /*new java.util.Scanner(System.in).nextLine()*/"ce24".toUpperCase();
+            String espansione = /*new java.util.Scanner(System.in).nextLine()*/"TWI".toUpperCase();
             System.out.println("inserisci il numero");
-            String numero = String.format("%03d", /*new java.util.Scanner(System.in).nextInt()*/5);
+            String numero = String.format("%03d", /*new java.util.Scanner(System.in).nextInt()*/1);
             String link = "https://swudb.com/card/" + espansione + "/" + numero;
             System.out.println("web scraping di " + link);
-            driver = new WebDriverWithoutImage();
             driver.get(link);
-            Carta c = new Carta(driver, true);
+            Carta c = new Carta(driver, false);
             System.out.println(c);
             System.out.println(new Gson().toJson(c));
         }catch (Exception e){
             System.out.println("c'è stato un errore, riprova");
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }finally {
             driver.quit();
         }

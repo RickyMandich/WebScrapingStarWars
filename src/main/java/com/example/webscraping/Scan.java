@@ -1,5 +1,6 @@
 package com.example.webscraping;
 
+import com.google.gson.JsonSyntaxException;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -69,56 +70,71 @@ public class Scan {
         int numeroThread = 0;
         try {
             Exception exception = null;
-            do{
-                try{
+            do {
+                try {
                     driver.get("https://swudb.com/sets/");
                     //css per ottenere il link fullset "a[href*=fullSet]"
-                }catch (Exception ex){
+                } catch (Exception ex) {
                     exception = ex;
                 }
-            }while(exception instanceof TimeoutException);
+            } while (exception instanceof TimeoutException);
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             List<WebElement> completeSetRow = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("div.col-span-1.md\\:col-span-3")));
-            for(WebElement csr : completeSetRow){
+            for (WebElement csr : completeSetRow) {
                 String set = csr.findElement(By.tagName("a")).getAttribute("href").split("/")[4];
                 String uscita = csr.findElement(By.tagName("p")).getText().replace("Release Date: ", "");
                 Carta.uscitaEspansioni.put(set, elaboraData(uscita));
             }
             driver.quit();
             boolean inCorso = true;
-            for(String set:Carta.uscitaEspansioni.keySet()){
+            for (String set : Carta.uscitaEspansioni.keySet()) {
                 espansioni = add(espansioni, set);
             }
             System.out.println("-----------------------\narray espansioni = ");
             espansioni = orderAndCompact(espansioni);
-            for(String s: espansioni){
+            for (String s : espansioni) {
                 System.out.println(s);
             }
             driver = new WebDriverWithoutImage();
             String[] carte = new String[0];
-            for(String set:espansioni){
+            for (String set : espansioni) {
                 System.out.println("ora scansiono " + set);
                 Toolkit.getDefaultToolkit().beep();
-                try{
-                    driver.get("https://swudb.com/sets/" + set + "fullSet");
+                try {
+                    driver.get("https://swudb.com/sets/" + set + "/fullSet");
                 } catch (Exception e) {
                     espansioni = add(espansioni, set);
                 }
-                List<WebElement> elements = driver.findElements(By.className("col-6"));
+                System.out.println("ora tocca al wait");
+                wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+                List<WebElement> elements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("img[alt*='Default Card Name']")));
+                System.out.println("trovate " + elements.size() + " carte");
                 for (WebElement e : elements) {
-                    String href = e.findElement(By.tagName("a")).getAttribute("href");
-                    if(href.split("/")[href.split("/").length-2].charAt(0) != 'T'){
-                        carte = add(carte, href, collezione);
+                    String url = e.getAttribute("src");
+                    System.out.println("analizzo la carta " + url);
+                    String regex = "[A-Z]{2,6}([0-9]{2})?\\/[0-9]{1,3}";
+                    System.out.println(regex);
+                    Pattern pat = Pattern.compile(regex);
+                    Matcher mat = pat.matcher(notNull(url));
+                    if(mat.find()) {
+                        url = mat.group();
+                        System.out.println("trovato " + url);
+                        url = "https://swudb.com/card/" + url;
+                        carte = add(carte, url, collezione);
+                    }else{
+                        System.out.println("non trovato");
                     }
                 }
+                System.out.println("analisi carte della pagina finita");
             }
             for (String c : carte) {
                 System.out.println(c);
             }
-            if(carte.length == 0) finito = true;
+            if (carte.length == 0) finito = true;
             driver.quit();
-            numeroThread = 4;                                                //new Scanner(System.in).nextInt();
-            tempo  = System.nanoTime() / 1000000;
+            System.out.println("quanti thread vuoi lanciare?");
+            numeroThread = new Scanner(System.in).nextInt();
+            tempo = System.nanoTime() / 1000000;
             carte = orderAndCompact(carte);
             Elenchi elenco = new Elenchi(carte, numeroThread, collezione);
             elenco.carte.ready();
@@ -128,9 +144,9 @@ public class Scan {
                 processi[i].start();
             }
             boolean fine = false;
-            while(!fine){
+            while (!fine) {
                 fine = true;
-                for(Thread t : processi){
+                for (Thread t : processi) {
                     if (t.isAlive()) {
                         fine = false;
                         break;
@@ -138,7 +154,11 @@ public class Scan {
                 }
             }
             collezione = elenco.getResult();
+        }catch (Exception e){
+            e.printStackTrace();
         } finally {
+            System.out.println("sono nel finally");
+            driver.quit();
             long tempoTrascorso = System.nanoTime() / 1000000;
             tempoTrascorso = tempoTrascorso - tempo;
             secondi += tempoTrascorso / 1000;
@@ -159,7 +179,10 @@ public class Scan {
             String json = json(collezione);
             try(FileWriter writer = new FileWriter("collezione.json")){
                 writer.write(json);
-                uploadWithFtp("collezione.json");
+                /*
+                * todo:
+                *  - sistemare l'upload*/
+                //uploadWithFtp("collezione.json");
             }catch (IOException e){
                 System.out.println("non ho trovato \"collezione.json\", inserisci tu il nome del file");
                 scrivi(json);
@@ -172,6 +195,10 @@ public class Scan {
         }
     }
 
+    public static String notNull(String s){
+        return s == null ? "" : s;
+    }
+
     private static Carta[] getJsonCollezione(){
         try{
             BufferedReader reader = new BufferedReader(new FileReader("collezione.json"));
@@ -181,7 +208,7 @@ public class Scan {
             }else{
                 throw new IOException("il file 'collezione.json' è vuoto");
             }
-        }catch (IOException e){
+        }catch (IOException |JsonSyntaxException e){
             return new Carta[0];
         }
     }
