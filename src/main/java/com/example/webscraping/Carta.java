@@ -4,16 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Carta {
@@ -40,7 +35,7 @@ public class Carta {
 
     public Carta(WebDriver driver) {
         System.out.println("----------------------inizio costruttore----------------------");
-        cid = Test.extractCid(driver.getCurrentUrl());
+        cid = Scan.extractCid(driver.getCurrentUrl());
         System.out.println("cid:\t" + cid);
         nome = driver.findElements(By.cssSelector("h3.text-2xl.font-extrabold")).getFirst().getText();
         System.out.println("nome fatto");

@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="com.example.webscraping.Test" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="com.example.webscraping.Test" />
+    <option name="MAIN_CLASS_NAME" value="com.example.webscraping.Scan" />
     <module name="WebScrapingStarWars" />
     <extension name="coverage">
       <pattern>

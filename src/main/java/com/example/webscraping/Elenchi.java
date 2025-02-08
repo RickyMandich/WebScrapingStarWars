@@ -1,7 +1,6 @@
 package com.example.webscraping;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 public class Elenchi{
     Stringhe carte;
