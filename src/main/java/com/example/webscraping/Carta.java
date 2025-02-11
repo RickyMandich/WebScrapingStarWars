@@ -31,8 +31,6 @@ public class Carta {
     double prezzo;
     String artista;
 
-    static Map<String, String> uscitaEspansioni = new HashMap<>();
-
     public Carta(WebDriver driver) {
         System.out.println("----------------------inizio costruttore----------------------");
         cid = Scan.extractCid(driver.getCurrentUrl());
