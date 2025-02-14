@@ -18,19 +18,13 @@ public class ThreadIta extends java.lang.Thread{
     public void run() {
         while (!str.isEmpty()){
             String url = str.getFirst();
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("--headless"); // Esegue Chrome in modalità headless
-            WebDriver driver = new ChromeDriver(options);
-            driver.get(url);
             try{
-                Carta carta = new Carta(driver);
+                Carta carta = new Carta(url);
                 System.out.println(carta);
                 collezione.add(carta);
                 str.remove(url);
             }catch (org.openqa.selenium.NoSuchElementException e){
                 System.out.println("errore: " + url);
-            }finally {
-                driver.quit();
             }
         }
     }

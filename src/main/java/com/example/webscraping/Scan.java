@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class Scan {
     public static long tempo;
 
-    public static Long extractCid(String url) {
+    public static String extractCid(String url) {
         String cid = "";
         Pattern pattern = Pattern.compile("cid=([0-9]+)");
         Matcher matcher = pattern.matcher(url);
@@ -32,7 +32,7 @@ public class Scan {
             cid = matcher.group(1);
         }
         try{
-            return Long.parseLong(cid);
+            return cid;
         } catch (NumberFormatException e) {
             System.out.println("url:\t" + url);
             System.out.println("cid:\t" + cid);
@@ -40,10 +40,10 @@ public class Scan {
         }
     }
 
-    public static Long[] add(Long[] array, Long line){
-        Long[] newArray = new Long[array.length + 1];
-        System.arraycopy(array, 0, newArray, 0, array.length);
-        newArray[array.length] = line;
+    public static String[] add(String[] oldArray, String newElement) {
+        String[] newArray = new String[oldArray.length + 1];
+        System.arraycopy(oldArray, 0, newArray, 0, oldArray.length);
+        newArray[oldArray.length] = newElement;
         return newArray;
     }
 
@@ -70,7 +70,7 @@ public class Scan {
 
             i=1;
             int j=0;
-            Long[] cid = new Long[0];
+            String[] cid = new String[0];
             List<WebElement> cardImages = driver.findElements(By.cssSelector("img[alt='Fronte Della Carta']"));
             while (cardImages.size() != 0) {
                 try{
@@ -104,8 +104,8 @@ public class Scan {
             try(FileWriter writer = new FileWriter("log.txt")){
                 writer.write("ho usato " + j + " subList\n");
                 i=0;
-                for(Long c : cid){
-                    carte[i] = "https://starwarsunlimited.com/it/cards?cid=" + c;
+                for(String c : cid){
+                    carte[i] = String.valueOf(c);
                     writer.write(i++ + ")\t" + (i<100?"\t":"") + c + "\n");
                 }
             }catch (IOException ignore){}

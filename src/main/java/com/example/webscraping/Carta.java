@@ -1,18 +1,14 @@
 package com.example.webscraping;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.net.*;
+import java.net.http.*;
 
 public class Carta {
-    long cid;
+    String cid;
     String nome;
     String titolo;
     boolean unica;
@@ -28,8 +24,83 @@ public class Carta {
     int vita;
     int potenza;
     String rarita;
-    double prezzo;
     String artista;
+
+    public Carta(String cid) {
+        String apiResult = apiCall(cid);
+        JsonObject jsonObject = new Gson().fromJson(apiResult, JsonObject.class);
+
+        // Accedi ai dati annidati
+        JsonObject data = jsonObject.getAsJsonObject("data");
+        JsonObject attributes = data.getAsJsonObject("attributes");
+
+        // Estrai i dati base
+        this.cid = cid;
+        this.nome = attributes.get("title").getAsString();
+        this.titolo = attributes.get("subtitle").getAsString();
+        this.unica = attributes.get("unique").getAsBoolean();
+        this.numero = attributes.get("cardNumber").getAsInt();
+        this.descrizione = attributes.get("text").getAsString();
+        this.costo = attributes.get("cost").getAsInt();
+        this.vita = attributes.get("hp").getAsInt();
+        this.potenza = attributes.get("power").getAsInt();
+        this.artista = attributes.get("artist").getAsString();
+
+        // Estrai espansione (solo il codice)
+        this.espansione = attributes.getAsJsonObject("expansion")
+                                  .getAsJsonObject("data")
+                                  .getAsJsonObject("attributes")
+                                  .get("code").getAsString();
+
+        // Estrai arena
+        JsonArray arenas = attributes.getAsJsonObject("arenas")
+                                   .getAsJsonArray("data");
+        if (arenas.size() > 0) {
+            this.arena = arenas.get(0)
+                              .getAsJsonObject()
+                              .getAsJsonObject("attributes")
+                              .get("name").getAsString();
+        }
+
+        // Estrai aspetti
+        JsonArray aspects = attributes.getAsJsonObject("aspects")
+                                    .getAsJsonArray("data");
+        if (aspects.size() > 0) {
+            this.aspettoPrimario = traduciAspetto(aspects.get(0)
+                                        .getAsJsonObject()
+                                        .getAsJsonObject("attributes")
+                                        .get("name").getAsString());
+        }
+        if (aspects.size() > 1) {
+            this.aspettoSecondario = traduciAspetto(aspects.get(1)
+                                          .getAsJsonObject()
+                                          .getAsJsonObject("attributes")
+                                          .get("name").getAsString());
+        }
+
+        // Estrai tipo
+        this.tipo = attributes.getAsJsonObject("type")
+                             .getAsJsonObject("data")
+                             .getAsJsonObject("attributes")
+                             .get("name").getAsString();
+
+        // Estrai tratti
+        JsonArray traits = attributes.getAsJsonObject("traits")
+                                   .getAsJsonArray("data");
+        this.tratti = new String[traits.size()];
+        for (int i = 0; i < traits.size(); i++) {
+            this.tratti[i] = traits.get(i)
+                                 .getAsJsonObject()
+                                 .getAsJsonObject("attributes")
+                                 .get("name").getAsString();
+        }
+
+        // Estrai rarità
+        this.rarita = attributes.getAsJsonObject("rarity")
+                               .getAsJsonObject("data")
+                               .getAsJsonObject("attributes")
+                               .get("name").getAsString();
+    }
 
     public Carta(WebDriver driver) {
         System.out.println("----------------------inizio costruttore----------------------");
@@ -125,41 +196,40 @@ public class Carta {
     public static String traduciAspetto(String aspetto){
         return switch (aspetto) {
             case "Vigilanza" -> "Blu";
-            case "Malvagità" -> "nero";
-            case "Eroismo" -> "bianco";
-            case "Autorità" -> "verde";
-            case "Offensiva" -> "rosso";
-            case "Astuzia" -> "giallo";
+            case "Malvagità" -> "Nero";
+            case "Eroismo" -> "Bianco";
+            case "Autorità" -> "Verde";
+            case "Offensiva" -> "Rosso";
+            case "Astuzia" -> "Giallo";
             default -> aspetto;
         };
     }
 
-    public Carta(String jsonString) {
-        JsonObject jsonObject = new Gson().fromJson(jsonString, JsonObject.class);
-        this.unica = jsonObject.get("unica").getAsBoolean();
-        this.nome = jsonObject.get("nome").getAsString();
-        this.titolo = jsonObject.get("titolo").getAsString();
-        this.espansione = jsonObject.get("espansione").getAsString();
-        this.numero = jsonObject.get("numero").getAsInt();
-        this.aspettoPrimario = jsonObject.get("aspettoPrimario").getAsString();
-        this.aspettoSecondario = jsonObject.get("aspettoSecondario").getAsString();
-        this.tipo = jsonObject.get("tipo").getAsString();
-        this.tratti = new Gson().fromJson(jsonObject.get("tratti"), String[].class);
-        this.descrizione = jsonObject.get("descrizione").getAsString();
-        this.arena = jsonObject.get("arena").getAsString();
-        this.costo = jsonObject.get("costo").getAsInt();
-        this.vita = jsonObject.get("vita").getAsInt();
-        this.potenza = jsonObject.get("potenza").getAsInt();
-        this.rarita = jsonObject.get("rarita").getAsString();
-        this.prezzo = jsonObject.get("prezzo").getAsDouble();
-        this.artista = jsonObject.get("artista").getAsString();
-    }
+    private String apiCall(String cid) {
+        HttpResponse<String> response;
+        try {
+            try(HttpClient client = HttpClient.newHttpClient()) {
+                String url = "https://admin.starwarsunlimited.com/api/card/" + cid + "?locale=it";
 
-    private String[] add(String[] oldArray, String newElement) {
-        String[] newArray = new String[oldArray.length + 1];
-        System.arraycopy(oldArray, 0, newArray, 0, oldArray.length);
-        newArray[oldArray.length] = newElement;
-        return newArray;
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(url))
+                        .header("Accept", "application/json")
+                        .GET()
+                        .build();
+
+                response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+
+                if (response.statusCode() != 200) {
+                    throw new RuntimeException("Errore API: " + response.statusCode());
+                }
+            }
+            return response.body();
+
+        } catch (Exception e) {
+            System.out.println("current card id: " + cid);
+            throw new RuntimeException("Errore nella chiamata API", e);
+        }
     }
 
     public String toString() {
@@ -205,16 +275,10 @@ public class Carta {
         if(rarita != null){
             info += "rarita:\t" + rarita + "\n";
         }
-        info += "prezzo:\t" + prezzo + "\n";
         if(artista != null) {
             info += "artista:\t" + artista + "\n";
         }
         return info;
-    }
-
-    public static long getLong(String message){
-        System.out.println(message);
-        return getLong();
     }
 
     public static long getLong(){
@@ -227,22 +291,13 @@ public class Carta {
     }
 
     public static void main(String[] args) {
-        boolean close = true;//Scan.getBoolean("vuoi chiudere il browser alla fine?");
         //insert another `*` on the first one to switch from the static to the dinamic input
         String cid = /*/String.valueOf(getLong("inserisci il cid (Carta ID) della carta che vuoi cercare"));/*/"4179470615";/**/
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless"); // Esegue Chrome in modalità headless
-        WebDriver driver = new ChromeDriver(options);
-        //String htmlContent = HtmlPageFetcher.getHtmlUsingSelenium("https://starwarsunlimited.com/it/cards?cid=" + cid);
-        driver.get("https://starwarsunlimited.com/it/cards?cid=" + cid/*"data:text/html;charset=utf-8," + htmlContent*/);
-        System.out.println("get eseguito, ora inizio a salvare i dati della carta");
         try {
-            Carta carta = new Carta(driver);
+            Carta carta = new Carta(cid);
             System.out.println(carta);
         }catch (Error e){
-            System.out.println("errore: " + e.getMessage());
-        }finally {
-            if(close) driver.quit();
+            e.printStackTrace();
         }
         System.out.println("fine");
     }
