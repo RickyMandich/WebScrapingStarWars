@@ -36,18 +36,21 @@ public class Carta {
 
         // Estrai i dati base
         this.cid = cid;
-        this.nome = attributes.get("title").getAsString();
-        this.titolo = attributes.get("subtitle").getAsString();
-        this.unica = attributes.get("unique").getAsBoolean();
-        this.numero = attributes.get("cardNumber").getAsInt();
-        this.descrizione = attributes.get("text").getAsString();
-        this.costo = attributes.get("cost").getAsInt();
-        this.vita = attributes.get("hp").getAsInt();
-        this.potenza = attributes.get("power").getAsInt();
-        this.artista = attributes.get("artist").getAsString();
+        this.nome = attributes.get("title").isJsonNull() ? null : attributes.get("title").getAsString();
+        this.titolo = attributes.get("subtitle").isJsonNull() ? null : attributes.get("subtitle").getAsString();
+        this.unica = attributes.get("unique").isJsonNull() ? false : attributes.get("unique").getAsBoolean();
+        this.numero = attributes.get("cardNumber").isJsonNull() ? 0 : attributes.get("cardNumber").getAsInt();
+        this.descrizione = attributes.get("text").isJsonNull() ? null : attributes.get("text").getAsString();
+        this.costo = attributes.get("cost").isJsonNull() ? 0 : attributes.get("cost").getAsInt();
+        this.vita = attributes.get("hp").isJsonNull() ? 0 : attributes.get("hp").getAsInt();
+        if(!attributes.get("power").isJsonNull()) this.potenza = attributes.get("power").getAsInt();
+        this.artista = attributes.get("artist").isJsonNull() ? null : attributes.get("artist").getAsString();
 
         // Estrai espansione (solo il codice)
         this.espansione = attributes.getAsJsonObject("expansion")
+                                  .getAsJsonObject("data")
+                                  .getAsJsonObject("attributes")
+                                  .get("code").isJsonNull() ? null : attributes.getAsJsonObject("expansion")
                                   .getAsJsonObject("data")
                                   .getAsJsonObject("attributes")
                                   .get("code").getAsString();
@@ -57,6 +60,9 @@ public class Carta {
                                    .getAsJsonArray("data");
         if (arenas.size() > 0) {
             this.arena = arenas.get(0)
+                              .getAsJsonObject()
+                              .getAsJsonObject("attributes")
+                              .get("name").isJsonNull() ? null : arenas.get(0)
                               .getAsJsonObject()
                               .getAsJsonObject("attributes")
                               .get("name").getAsString();
@@ -69,10 +75,16 @@ public class Carta {
             this.aspettoPrimario = traduciAspetto(aspects.get(0)
                                         .getAsJsonObject()
                                         .getAsJsonObject("attributes")
+                                        .get("name").isJsonNull() ? null : aspects.get(0)
+                                        .getAsJsonObject()
+                                        .getAsJsonObject("attributes")
                                         .get("name").getAsString());
         }
         if (aspects.size() > 1) {
             this.aspettoSecondario = traduciAspetto(aspects.get(1)
+                                          .getAsJsonObject()
+                                          .getAsJsonObject("attributes")
+                                          .get("name").isJsonNull() ? null : aspects.get(1)
                                           .getAsJsonObject()
                                           .getAsJsonObject("attributes")
                                           .get("name").getAsString());
@@ -80,6 +92,9 @@ public class Carta {
 
         // Estrai tipo
         this.tipo = attributes.getAsJsonObject("type")
+                             .getAsJsonObject("data")
+                             .getAsJsonObject("attributes")
+                             .get("name").isJsonNull() ? null : attributes.getAsJsonObject("type")
                              .getAsJsonObject("data")
                              .getAsJsonObject("attributes")
                              .get("name").getAsString();
@@ -92,11 +107,17 @@ public class Carta {
             this.tratti[i] = traits.get(i)
                                  .getAsJsonObject()
                                  .getAsJsonObject("attributes")
+                                 .get("name").isJsonNull() ? null : traits.get(i)
+                                 .getAsJsonObject()
+                                 .getAsJsonObject("attributes")
                                  .get("name").getAsString();
         }
 
         // Estrai rarità
         this.rarita = attributes.getAsJsonObject("rarity")
+                               .getAsJsonObject("data")
+                               .getAsJsonObject("attributes")
+                               .get("name").isJsonNull() ? null : attributes.getAsJsonObject("rarity")
                                .getAsJsonObject("data")
                                .getAsJsonObject("attributes")
                                .get("name").getAsString();
@@ -292,7 +313,7 @@ public class Carta {
 
     public static void main(String[] args) {
         //insert another `*` on the first one to switch from the static to the dinamic input
-        String cid = /*/String.valueOf(getLong("inserisci il cid (Carta ID) della carta che vuoi cercare"));/*/"4179470615";/**/
+        String cid = /**/String.valueOf(Scan.getString("inserisci il cid (Carta ID) della carta che vuoi cercare"));/*/"4179470615";/**/
         try {
             Carta carta = new Carta(cid);
             System.out.println(carta);
