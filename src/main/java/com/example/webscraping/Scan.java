@@ -8,7 +8,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.FindBy;
 
 import java.awt.*;
 import java.io.FileInputStream;
@@ -134,6 +133,8 @@ public class Scan {
             List<Carta> collezione = new ArrayList<>();
             ThreadIta t = new ThreadIta(carte, collezione);
             t.start();
+            while (t.isAlive()) {
+            }
             tempoTrascorso = System.nanoTime() / 1000000;
             tempoTrascorso = tempoTrascorso - tempo;
             System.out.println("tempo trascorso:\t" + formattaSecondi(tempoTrascorso));
