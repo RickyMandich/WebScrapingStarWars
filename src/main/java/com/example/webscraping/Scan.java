@@ -24,6 +24,22 @@ import java.util.regex.Pattern;
 public class Scan {
     public static long tempo;
 
+    public static boolean hasCid(String url) {
+        String cid = "";
+        Pattern pattern = Pattern.compile("cid=([0-9]+)");
+        Matcher matcher = pattern.matcher(url);
+        if (matcher.find()) {
+            cid = matcher.group(1);
+        }
+        try{
+            return !cid.isEmpty();
+        } catch (NumberFormatException e) {
+            System.out.println("url:\t" + url);
+            System.out.println("cid:\t" + cid);
+            throw e;
+        }
+    }
+
     public static String extractCid(String url) {
         String cid = "";
         Pattern pattern = Pattern.compile("cid=([0-9]+)");
@@ -57,7 +73,7 @@ public class Scan {
     public static void main(String[] args) {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless"); // Esegue Chrome in modalità headless
-        WebDriver driver = new ChromeDriver(options);
+        WebDriver driver = new ChromeDriver(/*options*/);
         long tempo  = System.nanoTime() / 1000000;
         try {
             driver.get("https://starwarsunlimited.com/it/cards");
@@ -93,8 +109,10 @@ public class Scan {
                         String url = driver.getCurrentUrl();
                         try{
                             System.out.println(i + ")\t" + (i++<100?"\t":"") + extractCid(url));
-                            cid = add(cid, extractCid(url));
-                            cardImages.remove(cardImage);
+                            if(hasCid(url)) {
+                                cid = add(cid, extractCid(url));
+                                cardImages.remove(cardImage);
+                            }
                         }catch (NumberFormatException ignore){}
                     }
                 }catch (org.openqa.selenium.ElementClickInterceptedException | org.openqa.selenium.JavascriptException ignore){}
