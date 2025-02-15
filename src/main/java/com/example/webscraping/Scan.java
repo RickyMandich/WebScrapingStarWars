@@ -3,6 +3,9 @@ package com.example.webscraping;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -12,6 +15,8 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.awt.*;
 import java.io.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -104,7 +109,7 @@ public class Scan {
                 ((JavascriptExecutor) driver).executeScript("window.scrollBy(0,1000);");
                 i++;
             }while(driver.findElement(By.cssSelector("body")).getText().toLowerCase().contains("carica"));
-
+            alert("ho finito di scorrere la pagina");
             i=1;
             int j=0;
             String[] cid = new String[0];
@@ -139,6 +144,7 @@ public class Scan {
                 }catch (org.openqa.selenium.ElementClickInterceptedException | org.openqa.selenium.JavascriptException ignore){}
             }
             System.out.println("ho usato " + j + " subList");
+            alert("ho finito di recuperare tutti i cid");
             String[] carte = new String[cid.length];
             Carta[] array = getJsonCollezione();
             List<Carta> collezione = new ArrayList<>(List.of(array));
@@ -199,11 +205,39 @@ public class Scan {
                 System.out.println("non ho trovato \"collezione.json\", inserisci tu il nome del file");
                 scrivi(json);
             }
-        }finally {
+        }catch (Error e){
+            alert(e.getMessage());
+        } finally {
             try{
                 java.lang.Thread.sleep(5000);
             }catch (Exception e){}
             driver.quit();
+        }
+    }
+
+    public static void alert(String message){
+        if(message == null){
+            message = "null";
+        }
+        final String BOT_TOKEN = "7717265706:AAH5chf4Ae3vsFSt7158K-RFWdh9BudnnQc";
+        final String CHAT_ID = "5533337157";
+        try {
+            String urlEncodedMessage = URLEncoder.encode(message, StandardCharsets.UTF_8);
+            String url = String.format(
+                    "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s",
+                    BOT_TOKEN, CHAT_ID, urlEncodedMessage
+            );
+
+            try (CloseableHttpClient client = HttpClients.createDefault()) {
+                HttpGet request = new HttpGet(url);
+                client.execute(request);
+                System.out.println(message);
+            }
+
+            System.out.println("Telegram notification sent successfully!");
+        } catch (IOException e) {
+            System.err.println("Error sending Telegram notification: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

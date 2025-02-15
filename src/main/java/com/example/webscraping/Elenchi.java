@@ -36,6 +36,11 @@ public class Elenchi{
         if(carte.length == 0) {
             this.carte = new ArrayList<String>();
         }else{
+            System.out.println(carte.length);
+            System.out.println("---------------------");
+            for(String c:carte){
+                Scan.alert(c);
+            }
             this.carte = new ArrayList<String>(List.of(carte));
         }
         this.collezione = collezione;
