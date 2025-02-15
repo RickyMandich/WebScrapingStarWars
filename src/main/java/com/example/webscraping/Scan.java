@@ -153,7 +153,7 @@ public class Scan {
                 i=0;
                 for(String c : cid){
                     if(!contains(collezione, c)) {
-                        carte[i] = String.valueOf(c);
+                        carte.add(String.valueOf(c));
                     }
                     writer.write(i++ + ")\t" + (i<100?"\t":"") + c + "\n");
                 }
