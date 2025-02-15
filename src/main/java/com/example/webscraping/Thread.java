@@ -1,35 +1,22 @@
 package com.example.webscraping;
 
-import org.openqa.selenium.WebDriver;
-
-public class Thread extends java.lang.Thread {
-    Elenchi link;
-    WebDriver driver;
-
-    public Thread(Elenchi link, WebDriver driver) {
-        this.link = link;
-        this.driver = driver;
+public class Thread extends java.lang.Thread{
+    private Elenchi elenco;
+    public Thread(Elenchi elenco) {
+        this.elenco = elenco;
     }
-
     @Override
     public void run() {
-        String line;
-        while((line = link.getLink(this)) != null){
-            try {
-                driver.get(line);
-                link.add(new Carta(driver));
-            } catch (Exception e) {
-                e.printStackTrace();
+        String url;
+        while ((url = elenco.getLink(this)) != null){
+            try{
+                Carta carta = new Carta(url);
+                System.out.println(carta);
+                elenco.add(carta);
+                elenco.removeLink(url);
+            }catch (org.openqa.selenium.NoSuchElementException e){
+                System.out.println("errore: " + url);
             }
-            System.out.println(link.progresso());
-            long tempoTrascorso = System.nanoTime() / 1000000;
-            tempoTrascorso = tempoTrascorso - Scan.tempo;
-            long secondi = tempoTrascorso / 1000;
-            System.out.println("tempo trascorso:\t" + Scan.formattaSecondi(secondi) + link.tempoStimato(secondi));
         }
-        System.out.println("ho finito");
-        link.hoFinito();
-        System.out.println("quit");
-        driver.quit();
     }
 }

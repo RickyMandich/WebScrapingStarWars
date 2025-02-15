@@ -1,6 +1,7 @@
 package com.example.webscraping;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import org.apache.commons.net.ftp.FTPClient;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -10,9 +11,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.awt.*;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -69,10 +68,33 @@ public class Scan {
         return newArray;
     }
 
+    private static Carta[] getJsonCollezione(){
+        try{
+            BufferedReader reader = new BufferedReader(new FileReader("collezione.json"));
+            String line;
+            if((line=reader.readLine()) != null){
+                return new Gson().fromJson(line, Carta[].class);
+            }else{
+                throw new IOException("il file 'collezione.json' è vuoto");
+            }
+        }catch (IOException | JsonSyntaxException e){
+            return new Carta[0];
+        }
+    }
+
+    public static boolean contains(List<Carta> collezione, String cid){
+        for(Carta c:collezione){
+            if(c.cid.equals(cid)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless"); // Esegue Chrome in modalità headless
-        WebDriver driver = new ChromeDriver(/*options*/);
+        WebDriver driver = new ChromeDriver(/**/options/**/);
         long tempo  = System.nanoTime() / 1000000;
         try {
             driver.get("https://starwarsunlimited.com/it/cards");
@@ -118,11 +140,15 @@ public class Scan {
             }
             System.out.println("ho usato " + j + " subList");
             String[] carte = new String[cid.length];
+            Carta[] array = getJsonCollezione();
+            List<Carta> collezione = new ArrayList<>(List.of(array));
             try(FileWriter writer = new FileWriter("log.txt")){
                 writer.write("ho usato " + j + " subList\n");
                 i=0;
                 for(String c : cid){
-                    carte[i] = String.valueOf(c);
+                    if(!contains(collezione, c)) {
+                        carte[i] = String.valueOf(c);
+                    }
                     writer.write(i++ + ")\t" + (i<100?"\t":"") + c + "\n");
                 }
             }catch (IOException ignore){}
@@ -130,10 +156,36 @@ public class Scan {
             tempoTrascorso = tempoTrascorso - tempo;
             System.out.println("tempo trascorso:\t" + formattaSecondi(tempoTrascorso));
             driver.quit();
-            List<Carta> collezione = new ArrayList<>();
-            ThreadIta t = new ThreadIta(carte, collezione);
-            t.start();
-            while (t.isAlive()) {
+            boolean mancanti;
+            if(carte.length==0){
+                System.out.println("non ci sono nuove carte");
+                mancanti = false;
+            }else{
+                mancanti = true;
+            }
+            if(mancanti) {
+                Elenchi elenco = new Elenchi(carte, collezione);
+                Thread[] thread = new Thread[20];
+                for (Thread t : thread) {
+                    t = new Thread(elenco);
+                    t.start();
+                }
+                boolean finito = false;
+                while (!finito) {
+                    finito = true;
+                    try {
+                        java.lang.Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                    for (java.lang.Thread t : thread) {
+                        if (t.isAlive()) {
+                            finito = false;
+                            break;
+                        }
+                    }
+                }
+                Scan.main(args);
             }
             tempoTrascorso = System.nanoTime() / 1000000;
             tempoTrascorso = tempoTrascorso - tempo;
@@ -143,12 +195,14 @@ public class Scan {
             try(FileWriter writer = new FileWriter("collezione.json")){
                 writer.write(json);
                 uploadWithFtp("collezione.json");
-            }catch (IOException e){
+            }catch (IOException ex){
                 System.out.println("non ho trovato \"collezione.json\", inserisci tu il nome del file");
                 scrivi(json);
             }
         }finally {
-            try{Thread.sleep(5000);}catch (Exception e){}
+            try{
+                java.lang.Thread.sleep(5000);
+            }catch (Exception e){}
             driver.quit();
         }
     }

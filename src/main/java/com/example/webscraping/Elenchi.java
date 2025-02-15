@@ -1,10 +1,11 @@
 package com.example.webscraping;
 
-import org.openqa.selenium.WebDriver;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Elenchi{
-    Stringhe carte;
-    Carta[] collezione;
+    List<String> carte;
+    List <Carta> collezione;
     boolean semaforoCollezione = false;
     int i;
     boolean finito = false;
@@ -13,7 +14,7 @@ public class Elenchi{
     int carteGiaFatte;
 
     public Elenchi(){
-        carte = new Stringhe(new String[0]);
+        carte = new ArrayList<String>(List.of(new String[0]));
         String linkBase = "https://swudb.com/card/";
         System.out.println("inserisci il set delle carte che vuoi inserire nel test");
         String set = new java.util.Scanner(System.in).nextLine();
@@ -24,69 +25,59 @@ public class Elenchi{
         for(int i=start;i<=end;i++){
             carte.add(linkBase + set + "/" + String.format("%03d", i));
         }
-        this.collezione = new Carta[0];
+        this.collezione = new ArrayList<Carta>();
         this.semaforoCollezione = false;
         this.i = 0;
         this.finito = false;
         this.thread = 0;
     }
 
-    public Elenchi(String[] carte, int thread, Carta[] collezione){
-        this.carte = new Stringhe(carte);
+    public Elenchi(String[] carte, List<Carta> collezione){
+        if(carte.length == 0) {
+            this.carte = new ArrayList<String>();
+        }else{
+            this.carte = new ArrayList<String>(List.of(carte));
+        }
         this.collezione = collezione;
-        this.carteGiaFatte = collezione.length;
+        this.carteGiaFatte = collezione.size();
         i=0;
-        this.thread = thread;
     }
 
     public String getLink(Thread t){
-        while(semaforoCollezione){
-            System.out.printf(t.getName());
-        }
         semaforoCollezione = true;
         String ret;
         try{
-            ret = carte.next();
+            ret = carte.get(i++);
+            carte.remove(ret);
             System.out.println("link emesso " + ret);
-        }catch(ArrayIndexOutOfBoundsException e){
+        }catch(IndexOutOfBoundsException e){
             ret =  null;
         }
         semaforoCollezione = false;
         return ret;
     }
 
+    public void removeLink(String url){
+        carte.remove(url);
+    }
+
     public void add(Carta c){
-        collezione = Scan.add(collezione, c);
+        collezione.add(c);
     }
 
     public String progresso(){
         double puntoPercentuale = (double) carte.size() /100;
-        double percentuale = (collezione.length-carteGiaFatte) / puntoPercentuale;
-        return (collezione.length-carteGiaFatte) + "/" + carte.size() + "(" + String.format("%.2f", percentuale) + "%)";
+        double percentuale = (collezione.size()-carteGiaFatte) / puntoPercentuale;
+        return (collezione.size()-carteGiaFatte) + "/" + carte.size() + "(" + String.format("%.2f", percentuale) + "%)";
     }
 
     public String tempoStimato(long secondi){
-        double carta = (double) secondi/(collezione.length-carteGiaFatte);
+        double carta = (double) secondi/(collezione.size()-carteGiaFatte);
         long tempoStimatoTotale = (long) (carta * carte.size());
         return "\ttempo stimato:\t" + Scan.formattaSecondi(tempoStimatoTotale - secondi);
     }
 
-    public static void main(String[] args){
-        Elenchi e = new Elenchi();
-        WebDriver driver = new WebDriverWithoutImage();
-        e.carte.ready();
-        driver.get(e.carte.getString(0));
-        e.add(new Carta(driver));
-        System.out.println(e.progresso());
-        try{
-            Thread.sleep(60000);
-        } catch (InterruptedException ex) {
-            throw new RuntimeException(ex);
-        }
-        driver.quit();
-    }
-
-    public Carta[] getResult(){
+    public List<Carta> getResult(){
         return collezione;
     }
 
