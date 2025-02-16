@@ -32,16 +32,16 @@ public class Elenchi{
         this.thread = 0;
     }
 
-    public Elenchi(String[] carte, List<Carta> collezione){
-        if(carte.length == 0) {
+    public Elenchi(List<String> carte, List<Carta> collezione){
+        if(carte.isEmpty()) {
             this.carte = new ArrayList<String>();
         }else{
-            System.out.println(carte.length);
+            System.out.println(carte.size());
             System.out.println("---------------------");
             for(String c:carte){
                 Scan.alert(c);
             }
-            this.carte = new ArrayList<String>(List.of(carte));
+            this.carte = new ArrayList<String>(carte);
         }
         this.collezione = collezione;
         this.carteGiaFatte = collezione.size();

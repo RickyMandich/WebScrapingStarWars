@@ -118,7 +118,7 @@ public class Scan {
                 try{
                     j++;
                     System.out.println("--------------------------------------------------------------------------------------------------------");
-                    System.out.println("tentativo " + j);
+                    alert("inizio il tentativo " + j + "sono alla " + i);
                     List<WebElement> subCardImages = new ArrayList<>(cardImages);
                     for (WebElement cardImage : subCardImages) {
                         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cardImage);
@@ -145,7 +145,7 @@ public class Scan {
             }
             System.out.println("ho usato " + j + " subList");
             alert("ho finito di recuperare tutti i cid");
-            String[] carte = new String[cid.length];
+            List<String> carte = new ArrayList<>();
             Carta[] array = getJsonCollezione();
             List<Carta> collezione = new ArrayList<>(List.of(array));
             try(FileWriter writer = new FileWriter("log.txt")){
@@ -163,7 +163,7 @@ public class Scan {
             System.out.println("tempo trascorso:\t" + formattaSecondi(tempoTrascorso));
             driver.quit();
             boolean mancanti;
-            if(carte.length==0){
+            if(carte.isEmpty()){
                 System.out.println("non ci sono nuove carte");
                 mancanti = false;
             }else{
@@ -231,10 +231,8 @@ public class Scan {
             try (CloseableHttpClient client = HttpClients.createDefault()) {
                 HttpGet request = new HttpGet(url);
                 client.execute(request);
-                System.out.println(message);
+                System.out.println("Telegram:\t" + message);
             }
-
-            System.out.println("Telegram notification sent successfully!");
         } catch (IOException e) {
             System.err.println("Error sending Telegram notification: " + e.getMessage());
             e.printStackTrace();
