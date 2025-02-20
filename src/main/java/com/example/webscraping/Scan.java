@@ -118,7 +118,7 @@ public class Scan {
                 try{
                     j++;
                     System.out.println("--------------------------------------------------------------------------------------------------------");
-                    alert("inizio il tentativo " + j + "sono alla " + i);
+                    alert("inizio il tentativo " + j + "\nsono alla " + i);
                     List<WebElement> subCardImages = new ArrayList<>(cardImages);
                     for (WebElement cardImage : subCardImages) {
                         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cardImage);
@@ -172,9 +172,9 @@ public class Scan {
             if(mancanti) {
                 Elenchi elenco = new Elenchi(carte, collezione);
                 Thread[] thread = new Thread[20];
-                for (Thread t : thread) {
-                    t = new Thread(elenco);
-                    t.start();
+                for(int h=0;h<thread.length;h++){
+                    thread[h] = new Thread(elenco);
+                    thread[h].start();
                 }
                 boolean finito = false;
                 while (!finito) {
@@ -184,14 +184,14 @@ public class Scan {
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
                     }
-                    for (java.lang.Thread t : thread) {
+                    for (Thread t : thread) {
                         if (t.isAlive()) {
                             finito = false;
                             break;
                         }
                     }
                 }
-                Scan.main(args);
+                collezione = elenco.getResult();
             }
             tempoTrascorso = System.nanoTime() / 1000000;
             tempoTrascorso = tempoTrascorso - tempo;
@@ -205,6 +205,7 @@ public class Scan {
                 System.out.println("non ho trovato \"collezione.json\", inserisci tu il nome del file");
                 scrivi(json);
             }
+            if(mancanti) Scan.main(args);
         }catch (Error e){
             alert(e.getMessage());
         } finally {
@@ -230,7 +231,7 @@ public class Scan {
 
             try (CloseableHttpClient client = HttpClients.createDefault()) {
                 HttpGet request = new HttpGet(url);
-                client.execute(request);
+                //client.execute(request);
                 System.out.println("Telegram:\t" + message);
             }
         } catch (IOException e) {
