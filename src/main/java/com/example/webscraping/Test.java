@@ -2,10 +2,9 @@ package com.example.webscraping;
 
 public class Test {
     public static void main(String[] args) {
-        long tempo1  = System.nanoTime() / 1000000;
-        System.out.println(tempo1);
-        try{Thread.sleep(60000);}catch(InterruptedException ignore){}
-        long tempo2 = System.nanoTime() / 1000000;
-        System.out.println(Scan.formattaSecondi(tempo2-tempo1));
+        long a = System.nanoTime()/1000000000;
+        for(int i=0;i<10000;i++) {
+            System.out.println(i + ":\t" + Scan.formattaSecondi(i));
+        }
     }
 }

@@ -97,10 +97,11 @@ public class Scan {
     }
 
     public static void main(String[] args) {
+        alert("inizio la scansione", true);
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless"); // Esegue Chrome in modalità headless
-        WebDriver driver = new ChromeDriver(/**/options/**/);
-        long tempo  = System.nanoTime() / 1000000;
+        WebDriver driver = new ChromeDriver(/*/options/**/);
+        long tempo  = System.nanoTime() / 1000000000;
         try {
             driver.get("https://starwarsunlimited.com/it/cards");
             ((JavascriptExecutor) driver).executeScript("document.body.style.zoom='25%'");
@@ -158,7 +159,7 @@ public class Scan {
                     writer.write(i++ + ")\t" + (i<100?"\t":"") + c + "\n");
                 }
             }catch (IOException ignore){}
-            long tempoTrascorso = System.nanoTime() / 1000000;
+            long tempoTrascorso = System.nanoTime() / 1000000000;
             tempoTrascorso = tempoTrascorso - tempo;
             System.out.println("tempo trascorso:\t" + formattaSecondi(tempoTrascorso));
             driver.quit();
@@ -193,7 +194,7 @@ public class Scan {
                 }
                 collezione = elenco.getResult();
             }
-            tempoTrascorso = System.nanoTime() / 1000000;
+            tempoTrascorso = System.nanoTime() / 1000000000;
             tempoTrascorso = tempoTrascorso - tempo;
             System.out.println("tempo trascorso:\t" + formattaSecondi(tempoTrascorso));
             Toolkit.getDefaultToolkit().beep();
@@ -206,6 +207,7 @@ public class Scan {
                 scrivi(json);
             }
             if(mancanti) Scan.main(args);
+            else alert("ho finito la scansione", true);
         }catch (Error e){
             alert(e.getMessage());
         } finally {
@@ -216,7 +218,7 @@ public class Scan {
         }
     }
 
-    public static void alert(String message){
+    public static void alert(String message, boolean telegram){
         if(message == null){
             message = "null";
         }
@@ -231,13 +233,17 @@ public class Scan {
 
             try (CloseableHttpClient client = HttpClients.createDefault()) {
                 HttpGet request = new HttpGet(url);
-                //client.execute(request);
+                if(telegram) client.execute(request);
                 System.out.println("Telegram:\t" + message);
             }
         } catch (IOException e) {
             System.err.println("Error sending Telegram notification: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public static void alert(String message){
+        alert(message, false);
     }
 
     public static String formattaSecondi(long secondi){
