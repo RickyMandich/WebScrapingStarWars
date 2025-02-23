@@ -82,12 +82,19 @@ public class Carta {
         }
         if (aspects.size() > 1) {
             this.aspettoSecondario = traduciAspetto(aspects.get(1)
-                                          .getAsJsonObject()
-                                          .getAsJsonObject("attributes")
-                                          .get("name").isJsonNull() ? null : aspects.get(1)
-                                          .getAsJsonObject()
-                                          .getAsJsonObject("attributes")
-                                          .get("name").getAsString());
+                                        .getAsJsonObject()
+                                        .getAsJsonObject("attributes")
+                                        .get("name").isJsonNull() ? null : aspects.get(1)
+                                        .getAsJsonObject()
+                                        .getAsJsonObject("attributes")
+                                        .get("name").getAsString());
+        }
+        JsonArray aspectDuplicates = attributes.getAsJsonObject("aspectDuplicates").getAsJsonArray("data");
+        if(aspectDuplicates.size() > 0){
+            this.aspettoSecondario = traduciAspetto(aspects.get(0)
+                                        .getAsJsonObject()
+                                        .getAsJsonObject("attributes")
+                                        .get("name").getAsString());
         }
 
         // Estrai tipo
