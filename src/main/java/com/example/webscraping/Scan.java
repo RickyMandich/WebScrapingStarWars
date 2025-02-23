@@ -155,6 +155,7 @@ public class Scan {
                 for(String c : cid){
                     if(!contains(collezione, c)) {
                         carte.add(String.valueOf(c));
+                        alert(i++ + ")\t" + (i<100?"\t":"") + c + "\n", true);
                     }
                     writer.write(i++ + ")\t" + (i<100?"\t":"") + c + "\n");
                 }
