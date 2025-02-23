@@ -2,6 +2,7 @@ package com.example.webscraping;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class Elenchi{
     List<String> carte;
@@ -58,7 +59,7 @@ public class Elenchi{
         try{
             ret = carte.removeFirst();
             System.out.println("link emesso " + ret);
-        }catch(IndexOutOfBoundsException e){
+        }catch(IndexOutOfBoundsException | NoSuchElementException e){
             ret =  null;
         }
         semaforoCollezione = false;

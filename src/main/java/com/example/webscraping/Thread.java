@@ -18,5 +18,6 @@ public class Thread extends java.lang.Thread{
                 Scan.alert("errore: " + url, true);
             }
         }
+        this.interrupt();
     }
 }

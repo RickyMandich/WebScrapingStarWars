@@ -199,7 +199,7 @@ public class Scan {
             String json = json(collezione);
             try(FileWriter writer = new FileWriter("collezione.json")){
                 writer.write(json);
-                uploadWithFtp("collezione.json");
+                //uploadWithFtp("collezione.json");
             }catch (IOException ex){
                 System.out.println("non ho trovato \"collezione.json\", inserisci tu il nome del file");
                 scrivi(json);
