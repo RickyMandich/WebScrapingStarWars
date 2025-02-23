@@ -100,12 +100,13 @@ public class Scan {
         alert("inizio la scansione", true);
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless"); // Esegue Chrome in modalità headless
-        WebDriver driver = new ChromeDriver(/*/options/**/);
+        WebDriver driver = new ChromeDriver(/**/options/**/);
         long tempo  = System.nanoTime() / 1000000000;
         try {
             driver.get("https://starwarsunlimited.com/it/cards");
             ((JavascriptExecutor) driver).executeScript("document.body.style.zoom='25%'");
             int i = 0;
+            alert("inizio a scorrere la pagina", true);
             do{
                 ((JavascriptExecutor) driver).executeScript("window.scrollBy(0,1000);");
                 i++;
@@ -149,16 +150,13 @@ public class Scan {
             List<String> carte = new ArrayList<>();
             Carta[] array = getJsonCollezione();
             List<Carta> collezione = new ArrayList<>(List.of(array));
-            try(FileWriter writer = new FileWriter("log.txt")){
-                writer.write("ho usato " + j + " subList\n");
-                i=0;
-                for(String c : cid){
-                    if(!contains(collezione, c)) {
-                        carte.add(String.valueOf(c));
-                        alert(i++ + ")\t" + (i<100?"\t":"") + c + "\n", true);
-                    }
+            i=0;
+            for(String c : cid){
+                if(!contains(collezione, c)) {
+                    carte.add(String.valueOf(c));
+                    alert(i++ + ")\t" + (i<100?"\t":"") + c);
                 }
-            }catch (IOException ignore){}
+            }
             long tempoTrascorso = System.nanoTime() / 1000000000;
             tempoTrascorso = tempoTrascorso - tempo;
             System.out.println("tempo trascorso:\t" + formattaSecondi(tempoTrascorso));

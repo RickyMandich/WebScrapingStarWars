@@ -10,11 +10,10 @@ public class Thread extends java.lang.Thread{
         String url;
         while ((url = elenco.getLink(this)) != null){
             try{
-                Scan.alert(url, true);
+                Scan.alert(url);
                 Carta carta = new Carta(url);
                 System.out.println(carta);
                 elenco.add(carta);
-                elenco.removeLink(url);
             }catch (org.openqa.selenium.NoSuchElementException e){
                 Scan.alert("errore: " + url, true);
             }

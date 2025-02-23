@@ -7,7 +7,6 @@ public class Elenchi{
     List<String> carte;
     List <Carta> collezione;
     boolean semaforoCollezione = false;
-    int i;
     boolean finito = false;
     //thread che sono in esecuzione
     int thread;
@@ -27,7 +26,6 @@ public class Elenchi{
         }
         this.collezione = new ArrayList<Carta>();
         this.semaforoCollezione = false;
-        this.i = 0;
         this.finito = false;
         this.thread = 0;
     }
@@ -45,25 +43,26 @@ public class Elenchi{
         }
         this.collezione = collezione;
         this.carteGiaFatte = collezione.size();
-        i=0;
     }
 
     public String getLink(Thread t){
+        while (semaforoCollezione){
+            try{
+                Thread.sleep(100);
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
+        }
         semaforoCollezione = true;
         String ret;
         try{
-            ret = carte.get(i++);
-            carte.remove(ret);
+            ret = carte.removeFirst();
             System.out.println("link emesso " + ret);
         }catch(IndexOutOfBoundsException e){
             ret =  null;
         }
         semaforoCollezione = false;
         return ret;
-    }
-
-    public void removeLink(String url){
-        carte.remove(url);
     }
 
     public void add(Carta c){
@@ -84,10 +83,6 @@ public class Elenchi{
 
     public List<Carta> getResult(){
         return collezione;
-    }
-
-    public Boolean getFinito(){
-        return finito;
     }
 
     public void hoFinito(){
