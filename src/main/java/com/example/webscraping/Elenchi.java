@@ -46,10 +46,10 @@ public class Elenchi{
         this.carteGiaFatte = collezione.size();
     }
 
-    public String getLink(Thread t){
+    public String getLink(ThreadParse t){
         while (semaforoCollezione){
             try{
-                Thread.sleep(100);
+                ThreadParse.sleep(100);
             }catch(InterruptedException e){
                 e.printStackTrace();
             }

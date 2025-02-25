@@ -1,11 +1,16 @@
 package com.example.webscraping;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -100,7 +105,7 @@ public class Scan {
         alert("inizio la scansione", true);
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless"); // Esegue Chrome in modalità headless
-        WebDriver driver = new ChromeDriver(/**/options/**/);
+        WebDriver driver = new ChromeDriver(/*/options/**/);
         long tempo  = System.nanoTime() / 1000000000;
         try {
             driver.get("https://starwarsunlimited.com/it/cards");
@@ -169,10 +174,11 @@ public class Scan {
                 mancanti = true;
             }
             if(mancanti) {
-                Elenchi elenco = new Elenchi(carte, collezione);
-                Thread[] thread = new Thread[20];
+                ThreadMessage tm = new ThreadMessage();
+                Elenchi elenco = new Elenchi(carte, collezione/*, tm*/);
+                ThreadParse[] thread = new ThreadParse[20];
                 for(int h=0;h<thread.length;h++){
-                    thread[h] = new Thread(elenco);
+                    thread[h] = new ThreadParse(elenco);
                     thread[h].start();
                 }
                 boolean finito = false;
@@ -183,7 +189,7 @@ public class Scan {
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
                     }
-                    for (Thread t : thread) {
+                    for (ThreadParse t : thread) {
                         if (t.isAlive()) {
                             finito = false;
                             break;
@@ -216,12 +222,13 @@ public class Scan {
         }
     }
 
-    public static void alert(String message, boolean telegram){
+    public static String alert(String message, boolean telegram){
         if(message == null){
             message = "null";
         }
         final String BOT_TOKEN = "7717265706:AAH5chf4Ae3vsFSt7158K-RFWdh9BudnnQc";
         final String CHAT_ID = "5533337157";
+        String messageId = null;
         try {
             String urlEncodedMessage = URLEncoder.encode("live:\t" + message, StandardCharsets.UTF_8);
             String url = String.format(
@@ -231,17 +238,112 @@ public class Scan {
 
             try (CloseableHttpClient client = HttpClients.createDefault()) {
                 HttpGet request = new HttpGet(url);
-                if(telegram) client.execute(request);
+                if(telegram) {
+                    try (CloseableHttpResponse response = client.execute(request)) {
+                        // Leggere la risposta
+                        HttpEntity entity = response.getEntity();
+                        if (entity != null) {
+                            String result = EntityUtils.toString(entity);
+
+                            JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
+                            if (jsonObject.has("ok") && jsonObject.get("ok").getAsBoolean() &&
+                                jsonObject.has("result") && jsonObject.getAsJsonObject("result").has("message_id")) {
+                                messageId = jsonObject.getAsJsonObject("result").get("message_id").getAsString();
+                            }
+                        }
+                    }
+                }
                 System.out.println("Telegram:\t" + message);
             }
         } catch (IOException e) {
             System.err.println("Error sending Telegram notification: " + e.getMessage());
             e.printStackTrace();
         }
+        return messageId;
     }
 
-    public static void alert(String message){
-        alert(message, false);
+    public static String alert(String message){
+        return alert(message, false);
+    }
+
+    public static void deleteMessage(String messageId){
+        final String BOT_TOKEN = "7717265706:AAH5chf4Ae3vsFSt7158K-RFWdh9BudnnQc";
+        final String CHAT_ID = "5533337157";
+
+        try {
+            // Costruire l'URL per la richiesta deleteMessage
+            String url = String.format(
+                    "https://api.telegram.org/bot%s/deleteMessage?chat_id=%s&message_id=%s",
+                    BOT_TOKEN, CHAT_ID, messageId
+            );
+
+            try (CloseableHttpClient client = HttpClients.createDefault()) {
+                HttpGet request = new HttpGet(url);
+
+                // Eseguire la richiesta
+                try (CloseableHttpResponse response = client.execute(request)) {
+                    HttpEntity entity = response.getEntity();
+                    if (entity != null) {
+                        String result = EntityUtils.toString(entity);
+
+                        // Verificare la risposta (opzionale)
+                        JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
+                        if (jsonObject.has("ok") && jsonObject.get("ok").getAsBoolean()) {
+                            System.out.println("Message deleted successfully: " + messageId);
+                        } else {
+                            System.err.println("Failed to delete message: " + result);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error deleting Telegram message: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public static String editMessage(String messageId, String newMessage) {
+        if (newMessage == null) {
+            newMessage = "null";
+        }
+
+        final String BOT_TOKEN = "7717265706:AAH5chf4Ae3vsFSt7158K-RFWdh9BudnnQc";
+        final String CHAT_ID = "5533337157";
+
+        try {
+            // Codificare il nuovo messaggio
+            String urlEncodedMessage = URLEncoder.encode("edit:\t" + newMessage, StandardCharsets.UTF_8);
+
+            // Costruire l'URL per la richiesta editMessageText
+            String url = String.format(
+                    "https://api.telegram.org/bot%s/editMessageText?chat_id=%s&message_id=%s&text=%s",
+                    BOT_TOKEN, CHAT_ID, messageId, urlEncodedMessage
+            );
+
+            try (CloseableHttpClient client = HttpClients.createDefault()) {
+                HttpGet request = new HttpGet(url);
+
+                // Eseguire la richiesta
+                try (CloseableHttpResponse response = client.execute(request)) {
+                    HttpEntity entity = response.getEntity();
+                    if (entity != null) {
+                        String result = EntityUtils.toString(entity);
+
+                        // Verificare la risposta
+                        JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
+                        if (jsonObject.has("ok") && jsonObject.get("ok").getAsBoolean()) {
+                            System.out.println("Message edited successfully: " + messageId);
+                        } else {
+                            System.err.println("Failed to edit message: " + result);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error editing Telegram message: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return messageId;
     }
 
     public static String formattaSecondi(long secondi){
