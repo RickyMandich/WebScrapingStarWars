@@ -261,12 +261,24 @@ public class Scan {
     public static void uploadWithFtp(String filePath){
         FTPClient ftp = new FTPClient();
         try {
+            System.out.println("ora connetto");
             ftp.connect("ftp.swudb.altervista.org");
+            System.out.println("mi sono connesso");
+            System.out.println("ora faccio il login");
             ftp.login("swudb", "Minecraft35?");
+            System.out.println("ho fatto il login");
+            System.out.println("ora imposto il tipo del file");
             ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
+            System.out.println("ho impostato il tipo del file");
+            System.out.println("ora carico il file");
             ftp.storeFile(filePath, new FileInputStream(filePath));
+            System.out.println("ho caricato il file");
+            System.out.println("ora esco");
             ftp.logout();
+            System.out.println("sono uscito");
+            System.out.println("ora mi disconnetto");
             ftp.disconnect();
+            System.out.println("mi sono disconnesso");
         }catch (IOException e){
             e.printStackTrace();
         }
