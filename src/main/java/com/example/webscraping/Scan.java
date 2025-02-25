@@ -258,29 +258,35 @@ public class Scan {
         return String.format("%02d", ore) + ":" + String.format("%02d", minuti) + ":" + String.format("%02d", secondi);
     }
 
-    public static void uploadWithFtp(String filePath){
-        FTPClient ftp = new FTPClient();
+    public static void uploadWithFtp(String filePath) {
+        String server = "ftp.swudb.altervista.org";
+        int port = 21;
+        String user = "swudb";
+        String pass = "Minecraft35?";
+
+        FTPClient ftpClient = new FTPClient();
         try {
-            System.out.println("ora connetto");
-            ftp.connect("ftp.swudb.altervista.org");
-            System.out.println("mi sono connesso");
-            System.out.println("ora faccio il login");
-            ftp.login("swudb", "Minecraft35?");
-            System.out.println("ho fatto il login");
-            System.out.println("ora imposto il tipo del file");
-            ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
-            System.out.println("ho impostato il tipo del file");
-            System.out.println("ora carico il file");
-            ftp.storeFile(filePath, new FileInputStream(filePath));
-            System.out.println("ho caricato il file");
-            System.out.println("ora esco");
-            ftp.logout();
-            System.out.println("sono uscito");
-            System.out.println("ora mi disconnetto");
-            ftp.disconnect();
-            System.out.println("mi sono disconnesso");
-        }catch (IOException e){
-            e.printStackTrace();
+            ftpClient.connect(server, port);
+            ftpClient.login(user, pass);
+            ftpClient.enterLocalPassiveMode();
+            try (FileInputStream inputStream = new FileInputStream(filePath)) {
+                boolean done = ftpClient.storeFile(filePath, inputStream);
+                if (done) {
+                    System.out.println("The file is uploaded successfully.");
+                } else {
+                    System.out.println("Could not upload the file.");
+                }
+            }
+        } catch (IOException ex) {
+        } finally {
+            try {
+                if (ftpClient.isConnected()) {
+                    ftpClient.logout();
+                    ftpClient.disconnect();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
