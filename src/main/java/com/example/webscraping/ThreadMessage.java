@@ -20,7 +20,7 @@ public class ThreadMessage extends java.lang.Thread{
         while (running || !messageBuffer.isEmpty()){
             if(!messageBuffer.isEmpty()){
                 if(lastMessage != null) Scan.deleteMessage(lastMessage);
-                lastMessage = Scan.alert(messageBuffer.getFirst());
+                lastMessage = Scan.alert(messageBuffer.getFirst(), true);
                 messageBuffer.removeFirst();
             }else{
                 try{
