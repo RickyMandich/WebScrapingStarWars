@@ -105,7 +105,7 @@ public class Scan {
         alert("inizio la scansione", true);
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless"); // Esegue Chrome in modalità headless
-        WebDriver driver = new ChromeDriver(/*/options/**/);
+        WebDriver driver = new ChromeDriver(/**/options/**/);
         long tempo  = System.nanoTime() / 1000000000;
         try {
             driver.get("https://starwarsunlimited.com/it/cards");
@@ -125,7 +125,7 @@ public class Scan {
                 try{
                     j++;
                     System.out.println("--------------------------------------------------------------------------------------------------------");
-                    alert("inizio il tentativo " + j + "\nsono alla " + i);
+                    alert("inizio il tentativo " + j + "\nsono alla " + i, true);
                     List<WebElement> subCardImages = new ArrayList<>(cardImages);
                     for (WebElement cardImage : subCardImages) {
                         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cardImage);
@@ -175,7 +175,8 @@ public class Scan {
             }
             if(mancanti) {
                 ThreadMessage tm = new ThreadMessage();
-                Elenchi elenco = new Elenchi(carte, collezione/*, tm*/);
+                tm.start();
+                Elenchi elenco = new Elenchi(carte, collezione, tm);
                 ThreadParse[] thread = new ThreadParse[20];
                 for(int h=0;h<thread.length;h++){
                     thread[h] = new ThreadParse(elenco);
@@ -196,6 +197,8 @@ public class Scan {
                         }
                     }
                 }
+                tm.finish();
+                try{tm.join();}catch (InterruptedException ignore){}
                 collezione = elenco.getResult();
             }
             tempoTrascorso = System.nanoTime() / 1000000000;

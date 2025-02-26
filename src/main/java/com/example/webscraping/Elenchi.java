@@ -5,12 +5,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class Elenchi{
+    ThreadMessage tp;
     List<String> carte;
     List <Carta> collezione;
     boolean semaforoCollezione = false;
-    boolean finito = false;
-    //thread che sono in esecuzione
-    int thread;
     int carteGiaFatte;
 
     public Elenchi(){
@@ -27,11 +25,9 @@ public class Elenchi{
         }
         this.collezione = new ArrayList<Carta>();
         this.semaforoCollezione = false;
-        this.finito = false;
-        this.thread = 0;
     }
 
-    public Elenchi(List<String> carte, List<Carta> collezione){
+    public Elenchi(List<String> carte, List<Carta> collezione, ThreadMessage tp){
         if(carte.isEmpty()) {
             this.carte = new ArrayList<String>();
         }else{
@@ -44,6 +40,7 @@ public class Elenchi{
         }
         this.collezione = collezione;
         this.carteGiaFatte = collezione.size();
+        this.tp = tp;
     }
 
     public String getLink(ThreadParse t){
@@ -83,11 +80,7 @@ public class Elenchi{
     }
 
     public List<Carta> getResult(){
-        return collezione;
-    }
 
-    public void hoFinito(){
-        thread--;
-        if(thread == 0) finito = true;
+        return collezione;
     }
 }

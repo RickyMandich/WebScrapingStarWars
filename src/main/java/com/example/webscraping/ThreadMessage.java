@@ -4,15 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ThreadMessage extends java.lang.Thread{
-    static String lastMessage;
-    static List<String> messageBuffer = new ArrayList<String>();
+    String lastMessage;
+    List<String> messageBuffer;
+    boolean messageBufferBusy;
+    boolean running;
+
+    public ThreadMessage() {
+        this.messageBuffer = new ArrayList<String>();
+        this.running = true;
+        this.messageBufferBusy = false;
+    }
 
     @Override
     public void run() {
-        while (true){
-            if(messageBuffer.size() > 0){
-                lastMessage = Scan.editMessage(lastMessage, messageBuffer.getFirst());
-                messageBuffer.remove(lastMessage);
+        while (running || !messageBuffer.isEmpty()){
+            if(!messageBuffer.isEmpty()){
+                if(lastMessage != null) Scan.deleteMessage(lastMessage);
+                lastMessage = Scan.alert(messageBuffer.getFirst());
+                messageBuffer.removeFirst();
             }else{
                 try{
                     Thread.sleep(1000);
@@ -21,5 +30,20 @@ public class ThreadMessage extends java.lang.Thread{
                 }
             }
         }
+    }
+
+    public void finish(){
+        running = false;
+    }
+
+    public void addMessage(String message){
+        while(messageBufferBusy){
+            try{
+                Thread.sleep(10);
+            }catch (InterruptedException ignore){}
+        }
+        messageBufferBusy = true;
+        messageBuffer.add(message);
+        messageBufferBusy = false;
     }
 }
