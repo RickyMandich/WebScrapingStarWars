@@ -14,10 +14,11 @@ public class ThreadParse extends java.lang.Thread{
                 Scan.alert(url);
                 Carta carta = new Carta(url);
                 System.out.println(carta);
-                elenco.tp.addMessage("cid:\t" + carta.cid + "\ncarta: " + carta.espansione.toUpperCase() + " - " + carta.numero + " " + carta.nome + " " + carta.titolo.toUpperCase());
+                elenco.tm.addMessage("cid:\t" + carta.cid + "\ncarta: " + carta.espansione.toUpperCase() + " - " + carta.numero + " " + carta.nome + " " + carta.titolo.toUpperCase());
+                elenco.tm.addMessage(elenco.progresso());
                 elenco.add(carta);
             }catch (org.openqa.selenium.NoSuchElementException e){
-                elenco.tp.addMessage("errore: " + url);
+                elenco.tm.addMessage("errore: " + url);
             }
         }
         this.interrupt();

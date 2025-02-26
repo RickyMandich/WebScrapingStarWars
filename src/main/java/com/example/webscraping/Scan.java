@@ -79,6 +79,7 @@ public class Scan {
     }
 
     private static Carta[] getJsonCollezione(){
+        downloadWithFtp("collezione.json");
         try{
             BufferedReader reader = new BufferedReader(new FileReader("collezione.json"));
             String line;
@@ -102,7 +103,9 @@ public class Scan {
     }
 
     public static void main(String[] args) {
-        alert("inizio la scansione", true);
+        ThreadMessage tm = new ThreadMessage();
+        tm.start();
+        tm.addMessage("inizio la scansione");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless"); // Esegue Chrome in modalità headless
         WebDriver driver = new ChromeDriver(/**/options/**/);
@@ -111,12 +114,12 @@ public class Scan {
             driver.get("https://starwarsunlimited.com/it/cards");
             ((JavascriptExecutor) driver).executeScript("document.body.style.zoom='25%'");
             int i = 0;
-            alert("inizio a scorrere la pagina", true);
+            tm.addMessage("inizio a scorrere la pagina");
             do{
                 ((JavascriptExecutor) driver).executeScript("window.scrollBy(0,1000);");
                 i++;
             }while(driver.findElement(By.cssSelector("body")).getText().toLowerCase().contains("carica"));
-            alert("ho finito di scorrere la pagina");
+            tm.addMessage("ho finito di scorrere la pagina");
             i=1;
             int j=0;
             String[] cid = new String[0];
@@ -125,7 +128,7 @@ public class Scan {
                 try{
                     j++;
                     System.out.println("--------------------------------------------------------------------------------------------------------");
-                    alert("inizio il tentativo " + j + "\nsono alla " + i, true);
+                    tm.addMessage("inizio il tentativo " + j + "\nsono alla " + i);
                     List<WebElement> subCardImages = new ArrayList<>(cardImages);
                     for (WebElement cardImage : subCardImages) {
                         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cardImage);
@@ -151,15 +154,14 @@ public class Scan {
                 }catch (org.openqa.selenium.ElementClickInterceptedException | org.openqa.selenium.JavascriptException ignore){}
             }
             System.out.println("ho usato " + j + " subList");
-            alert("ho finito di recuperare tutti i cid");
+            tm.addMessage("ho finito di recuperare tutti i cid");
             List<String> carte = new ArrayList<>();
-            Carta[] array = getJsonCollezione();
-            List<Carta> collezione = new ArrayList<>(List.of(array));
+            List<Carta> collezione = new ArrayList<>(List.of(getJsonCollezione()));
             i=0;
             for(String c : cid){
                 if(!contains(collezione, c)) {
                     carte.add(String.valueOf(c));
-                    alert(i++ + ")\t" + (i<100?"\t":"") + c);
+                    tm.addMessage(i++ + ")\t" + (i<100?"\t":"") + c);
                 }
             }
             long tempoTrascorso = System.nanoTime() / 1000000000;
@@ -174,8 +176,6 @@ public class Scan {
                 mancanti = true;
             }
             if(mancanti) {
-                ThreadMessage tm = new ThreadMessage();
-                tm.start();
                 Elenchi elenco = new Elenchi(carte, collezione, tm);
                 ThreadParse[] thread = new ThreadParse[20];
                 for(int h=0;h<thread.length;h++){
@@ -197,8 +197,6 @@ public class Scan {
                         }
                     }
                 }
-                tm.finish();
-                try{tm.join();}catch (InterruptedException ignore){}
                 collezione = elenco.getResult();
             }
             tempoTrascorso = System.nanoTime() / 1000000000;
@@ -208,20 +206,24 @@ public class Scan {
             String json = json(collezione);
             try(FileWriter writer = new FileWriter("collezione.json")){
                 writer.write(json);
-                //uploadWithFtp("collezione.json");
             }catch (IOException ex){
                 System.out.println("non ho trovato \"collezione.json\", inserisci tu il nome del file");
                 scrivi(json);
             }
             if(mancanti) Scan.main(args);
-            else alert("ho finito la scansione", true);
+            else {
+                tm.addMessage("ho finito la scansione");
+                uploadWithFtp("collezione.json");
+            }
         }catch (Error e){
-            alert(e.getMessage());
+            tm.addMessage(e.getMessage());
         } finally {
             try{
                 java.lang.Thread.sleep(5000);
             }catch (Exception e){}
             driver.quit();
+            tm.finish();
+            try{tm.join();}catch (InterruptedException ignore){}
         }
     }
 
@@ -361,6 +363,40 @@ public class Scan {
             ore++;
         }
         return String.format("%02d", ore) + ":" + String.format("%02d", minuti) + ":" + String.format("%02d", secondi);
+    }
+
+    public static void downloadWithFtp(String filePath) {
+        String server = "ftp.swudb.altervista.org";
+        int port = 21;
+        String user = "swudb";
+        String pass = "Minecraft35?";
+
+        FTPClient ftpClient = new FTPClient();
+        try {
+            ftpClient.connect(server, port);
+            ftpClient.login(user, pass);
+            ftpClient.enterLocalPassiveMode();
+
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                boolean done = ftpClient.retrieveFile(filePath, outputStream);
+                if (done) {
+                    System.out.println("Il file è stato scaricato con successo.");
+                } else {
+                    System.out.println("Impossibile scaricare il file.");
+                }
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (ftpClient.isConnected()) {
+                    ftpClient.logout();
+                    ftpClient.disconnect();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     public static void uploadWithFtp(String filePath) {

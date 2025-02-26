@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class Elenchi{
-    ThreadMessage tp;
+    ThreadMessage tm;
     List<String> carte;
     List <Carta> collezione;
     boolean semaforoCollezione = false;
@@ -27,7 +27,7 @@ public class Elenchi{
         this.semaforoCollezione = false;
     }
 
-    public Elenchi(List<String> carte, List<Carta> collezione, ThreadMessage tp){
+    public Elenchi(List<String> carte, List<Carta> collezione, ThreadMessage tm){
         if(carte.isEmpty()) {
             this.carte = new ArrayList<String>();
         }else{
@@ -40,7 +40,7 @@ public class Elenchi{
         }
         this.collezione = collezione;
         this.carteGiaFatte = collezione.size();
-        this.tp = tp;
+        this.tm = tm;
     }
 
     public String getLink(ThreadParse t){

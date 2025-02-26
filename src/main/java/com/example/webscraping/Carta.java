@@ -37,7 +37,7 @@ public class Carta {
         // Estrai i dati base
         this.cid = cid;
         this.nome = attributes.get("title").isJsonNull() ? null : attributes.get("title").getAsString();
-        this.titolo = attributes.get("subtitle").isJsonNull() ? null : attributes.get("subtitle").getAsString();
+        this.titolo = attributes.get("subtitle").isJsonNull() ? "" : attributes.get("subtitle").getAsString();
         this.unica = attributes.get("unique").isJsonNull() ? false : attributes.get("unique").getAsBoolean();
         this.numero = attributes.get("cardNumber").isJsonNull() ? 0 : attributes.get("cardNumber").getAsInt();
         this.descrizione = attributes.get("text").isJsonNull() ? null : attributes.get("text").getAsString();
