@@ -4,9 +4,6 @@ import com.google.gson.*;
 
 import org.openqa.selenium.*;
 
-import java.net.*;
-import java.net.http.*;
-
 public class Carta {
     String cid;
     String nome;
@@ -233,31 +230,8 @@ public class Carta {
         };
     }
 
-    private String apiCall(String cid) {
-        HttpResponse<String> response;
-        try {
-            try(HttpClient client = HttpClient.newHttpClient()) {
-                String url = "https://admin.starwarsunlimited.com/api/card/" + cid + "?locale=it";
-
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(url))
-                        .header("Accept", "application/json")
-                        .GET()
-                        .build();
-
-                response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-
-                if (response.statusCode() != 200) {
-                    throw new RuntimeException("Errore API: " + response.statusCode());
-                }
-            }
-            return response.body();
-
-        } catch (Exception e) {
-            System.out.println("current card id: " + cid);
-            throw new RuntimeException("Errore nella chiamata API", e);
-        }
+    public static String apiCall(String cid) {
+        return Scan.apiCall("https://admin.starwarsunlimited.com/api/card/" + cid + "?locale=it");
     }
 
     public String toString() {

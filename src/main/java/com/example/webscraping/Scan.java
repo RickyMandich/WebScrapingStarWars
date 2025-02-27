@@ -1,9 +1,6 @@
 package com.example.webscraping;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -11,12 +8,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+
+import java.net.*;
+import java.net.http.*;
 
 import java.awt.*;
 import java.io.*;
@@ -106,58 +100,33 @@ public class Scan {
         ThreadMessage tm = new ThreadMessage();
         tm.start();
         tm.addMessage("inizio la scansione");
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless"); // Esegue Chrome in modalità headless
-        WebDriver driver = new ChromeDriver(/**/options/**/);
         long tempo  = System.nanoTime() / 1000000000;
         try {
-            driver.get("https://starwarsunlimited.com/it/cards");
-            ((JavascriptExecutor) driver).executeScript("document.body.style.zoom='25%'");
-            int i = 0;
-            tm.addMessage("inizio a scorrere la pagina");
-            do{
-                ((JavascriptExecutor) driver).executeScript("window.scrollBy(0,1000);");
-                i++;
-            }while(driver.findElement(By.cssSelector("body")).getText().toLowerCase().contains("carica"));
-            tm.addMessage("ho finito di scorrere la pagina");
-            i=1;
-            int j=0;
             String[] cid = new String[0];
-            List<WebElement> cardImages = driver.findElements(By.cssSelector("img[alt='Fronte Della Carta']"));
-            while (cardImages.size() != 0) {
-                try{
-                    j++;
-                    System.out.println("--------------------------------------------------------------------------------------------------------");
-                    tm.addMessage("inizio il tentativo " + j + "\nsono alla " + i);
-                    List<WebElement> subCardImages = new ArrayList<>(cardImages);
-                    for (WebElement cardImage : subCardImages) {
-                        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cardImage);
-                        boolean continueLoop = false;
-                        while (!continueLoop) {
-                            if(!((long) ((JavascriptExecutor) driver).executeScript("return document.querySelectorAll('div.flex.gap-4.items-start button:last-child').length")>0)){
-                                cardImage.click();
-                                continueLoop = true;
-                            }else{
-                                closeWindow(driver);
-                                continueLoop = false;
-                            }
-                        }
-                        String url = driver.getCurrentUrl();
-                        try{
-                            System.out.println(i + ")\t" + (i++<100?"\t":"") + extractCid(url));
-                            if(hasCid(url)) {
-                                cid = add(cid, extractCid(url));
-                                cardImages.remove(cardImage);
-                            }
-                        }catch (NumberFormatException ignore){}
-                    }
-                }catch (org.openqa.selenium.ElementClickInterceptedException | org.openqa.selenium.JavascriptException ignore){}
+            int page = 1;
+            boolean pageFinished = false;
+            while (!pageFinished) {
+                JsonObject jsonObject = new Gson().fromJson(apiCall("https://admin.starwarsunlimited.com/api/card-list?locale=it&filters[variantOf][id][$null]=true&pagination[page]=" + page + "&pagination[pageSize]=250"), JsonObject.class);
+                //recupero tutti i cid
+                JsonArray cards = jsonObject.getAsJsonArray("data");
+                for (JsonElement card : cards) {
+                    JsonObject attributes = card.getAsJsonObject().getAsJsonObject("attributes");
+                    System.out.println(attributes);
+                    JsonObject cardId = attributes.getAsJsonObject("cardId");
+                    System.out.println(cardId.getAsString());
+                    cid = add(cid, cardId.getAsString());
+                }
+
+                // controllo se ho finito le pagine
+                JsonObject pagination = jsonObject.getAsJsonObject("meta").getAsJsonObject("pagination");
+                pageFinished = (pagination.getAsJsonObject("page")) == (pagination.getAsJsonObject("pageCount"));
+                page++;
             }
-            System.out.println("ho usato " + j + " subList");
+
             tm.addMessage("ho finito di recuperare tutti i cid");
             List<String> carte = new ArrayList<>();
             List<Carta> collezione = new ArrayList<>(List.of(getJsonCollezione()));
-            i=0;
+            int i=0;
             for(String c : cid){
                 if(!contains(collezione, c)) {
                     carte.add(String.valueOf(c));
@@ -167,7 +136,6 @@ public class Scan {
             long tempoTrascorso = System.nanoTime() / 1000000000;
             tempoTrascorso = tempoTrascorso - tempo;
             System.out.println("tempo trascorso:\t" + formattaSecondi(tempoTrascorso));
-            driver.quit();
             boolean mancanti;
             if(carte.isEmpty()){
                 System.out.println("non ci sono nuove carte");
@@ -221,7 +189,6 @@ public class Scan {
             try{
                 java.lang.Thread.sleep(5000);
             }catch (Exception e){}
-            driver.quit();
             tm.finish();
             try{tm.join();}catch (InterruptedException ignore){}
         }
@@ -265,6 +232,32 @@ public class Scan {
             e.printStackTrace();
         }
         return messageId;
+    }
+
+    public static String apiCall(String url) {
+        HttpResponse<String> response;
+        try {
+            try(HttpClient client = HttpClient.newHttpClient()) {
+
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(url))
+                        .header("Accept", "application/json")
+                        .GET()
+                        .build();
+
+                response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+
+                if (response.statusCode() != 200) {
+                    throw new RuntimeException("Errore API: " + response.statusCode());
+                }
+            }
+            return response.body();
+
+        } catch (Exception e) {
+            System.out.println("current link: " + url);
+            throw new RuntimeException("Errore nella chiamata API", e);
+        }
     }
 
     public static String alert(String message){
@@ -459,12 +452,6 @@ public class Scan {
         }catch (IOException e){
             System.out.println("errore nella scrittura del file");
             scrivi(json);
-        }
-    }
-
-    public static void closeWindow(WebDriver driver) {
-        while ((long) ((JavascriptExecutor) driver).executeScript("return document.querySelectorAll('div.flex.gap-4.items-start button:last-child').length")>0) {
-            ((JavascriptExecutor) driver).executeScript("document.querySelector(\"div.flex.gap-4.items-start button:last-child\").click()");
         }
     }
 }
