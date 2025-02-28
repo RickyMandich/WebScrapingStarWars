@@ -16,10 +16,8 @@ import java.awt.*;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -106,23 +104,28 @@ public class Scan {
             int page = 1;
             boolean pageFinished = false;
             while (!pageFinished) {
-                JsonObject jsonObject = new Gson().fromJson(apiCall("https://admin.starwarsunlimited.com/api/card-list?locale=it&filters[variantOf][id][$null]=true&pagination[page]=" + page + "&pagination[pageSize]=250"), JsonObject.class);
+                String url = "https://admin.starwarsunlimited.com/api/card-list?locale=it&filters[variantOf][id][$null]=true&pagination[page]=" + page + "&pagination[pageSize]=250";
+                JsonObject jsonObject = new Gson().fromJson(apiCall(url), JsonObject.class);
                 //recupero tutti i cid
                 JsonArray cards = jsonObject.getAsJsonArray("data");
                 for (JsonElement card : cards) {
                     JsonObject attributes = card.getAsJsonObject().getAsJsonObject("attributes");
-                    System.out.println(attributes);
-                    JsonObject cardId = attributes.getAsJsonObject("cardId");
+                    //System.out.println(attributes);
+                    JsonElement cardId = attributes.get("cardUid");
                     System.out.println(cardId.getAsString());
                     cid = add(cid, cardId.getAsString());
                 }
 
                 // controllo se ho finito le pagine
                 JsonObject pagination = jsonObject.getAsJsonObject("meta").getAsJsonObject("pagination");
-                pageFinished = (pagination.getAsJsonObject("page")) == (pagination.getAsJsonObject("pageCount"));
+                try{
+                    pageFinished = pagination.get("page").getAsString().equals(pagination.get("pageCount").getAsString());
+                }catch (java.lang.ClassCastException e){
+                    pageFinished = true;
+                    tm.addMessage("errore, ultimo url per il recupero carte:\t" + url);
+                }
                 page++;
             }
-
             tm.addMessage("ho finito di recuperare tutti i cid");
             List<String> carte = new ArrayList<>();
             List<Carta> collezione = new ArrayList<>(List.of(getJsonCollezione()));
@@ -178,17 +181,14 @@ public class Scan {
                 System.out.println("non ho trovato \"collezione.json\", inserisci tu il nome del file");
                 scrivi(json);
             }
+            uploadWithFtp("collezione.json");
             if(mancanti) Scan.main(args);
             else {
                 tm.addMessage("ho finito la scansione");
-                uploadWithFtp("collezione.json");
             }
         }catch (Error e){
             tm.addMessage(e.getMessage());
         } finally {
-            try{
-                java.lang.Thread.sleep(5000);
-            }catch (Exception e){}
             tm.finish();
             try{tm.join();}catch (InterruptedException ignore){}
         }
@@ -284,7 +284,6 @@ public class Scan {
                     if (entity != null) {
                         String result = EntityUtils.toString(entity);
 
-                        // Verificare la risposta (opzionale)
                         JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
                         if (jsonObject.has("ok") && jsonObject.get("ok").getAsBoolean()) {
                             System.out.println("Message deleted successfully: " + messageId);
