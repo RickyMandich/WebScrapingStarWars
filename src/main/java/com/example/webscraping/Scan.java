@@ -104,7 +104,7 @@ public class Scan {
             int page = 1;
             boolean pageFinished = false;
             while (!pageFinished) {
-                String url = "https://admin.starwarsunlimited.com/api/card-list?locale=it&filters[variantOf][id][$null]=true&pagination[page]=" + page + "&pagination[pageSize]=250";
+                String url = "https://admin.starwarsunlimited.com/api/card-list?locale=it&filters[variantOf][id][$null]=true&pagination[page]=" + page + "&pagination[pageSize]=80";
                 JsonObject jsonObject = new Gson().fromJson(apiCall(url), JsonObject.class);
                 //recupero tutti i cid
                 JsonArray cards = jsonObject.getAsJsonArray("data");
