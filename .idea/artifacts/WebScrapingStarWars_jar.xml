@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="WebScrapingStarWars:jar">
-    <output-path>$PROJECT_DIR$/../../../Public</output-path>
+    <output-path>$PROJECT_DIR$</output-path>
     <root id="archive" name="WebScrapingStarWars.jar">
       <element id="directory" name="META-INF">
         <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
