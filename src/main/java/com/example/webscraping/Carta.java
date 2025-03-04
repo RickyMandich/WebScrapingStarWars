@@ -129,11 +129,13 @@ public class Carta {
                                .getAsJsonObject("attributes")
                                .get("name").getAsString();
 
-        if(!aspettoPrimario.equals(aspettoSecondario) && !new ArrayList<>(List.of(new String[]{"Bianco", "nero"})).contains(aspettoSecondario)){
-            String temp = aspettoPrimario;
-            aspettoPrimario = aspettoSecondario;
-            aspettoSecondario = temp;
-        }
+        try{
+            if(!aspettoPrimario.equals(aspettoSecondario) && !new ArrayList<>(List.of(new String[]{"Bianco", "nero"})).contains(aspettoSecondario)){
+                String temp = aspettoPrimario;
+                aspettoPrimario = aspettoSecondario;
+                aspettoSecondario = temp;
+            }
+        }catch (java.lang.NullPointerException ignore){}
     }
 
     public Carta(WebDriver driver) {
