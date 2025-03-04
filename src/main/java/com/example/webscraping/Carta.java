@@ -4,6 +4,9 @@ import com.google.gson.*;
 
 import org.openqa.selenium.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Carta {
     String cid;
     String nome;
@@ -68,11 +71,11 @@ public class Carta {
         // Estrai aspetti
         JsonArray aspects = attributes.getAsJsonObject("aspects")
                                     .getAsJsonArray("data");
-        if (aspects.size() > 0) {
+        if (!aspects.isEmpty()) {
             this.aspettoPrimario = traduciAspetto(aspects.get(0)
                                         .getAsJsonObject()
                                         .getAsJsonObject("attributes")
-                                        .get("name").isJsonNull() ? null : aspects.get(0)
+                                        .get("name").isJsonNull() ? "" : aspects.get(0)
                                         .getAsJsonObject()
                                         .getAsJsonObject("attributes")
                                         .get("name").getAsString());
@@ -81,13 +84,13 @@ public class Carta {
             this.aspettoSecondario = traduciAspetto(aspects.get(1)
                                         .getAsJsonObject()
                                         .getAsJsonObject("attributes")
-                                        .get("name").isJsonNull() ? null : aspects.get(1)
+                                        .get("name").isJsonNull() ? "" : aspects.get(1)
                                         .getAsJsonObject()
                                         .getAsJsonObject("attributes")
                                         .get("name").getAsString());
         }
         JsonArray aspectDuplicates = attributes.getAsJsonObject("aspectDuplicates").getAsJsonArray("data");
-        if(aspectDuplicates.size() > 0){
+        if(!aspectDuplicates.isEmpty()){
             this.aspettoSecondario = traduciAspetto(aspects.get(0)
                                         .getAsJsonObject()
                                         .getAsJsonObject("attributes")
@@ -125,6 +128,12 @@ public class Carta {
                                .getAsJsonObject("data")
                                .getAsJsonObject("attributes")
                                .get("name").getAsString();
+
+        if(!aspettoPrimario.equals(aspettoSecondario) && !new ArrayList<>(List.of(new String[]{"Bianco", "nero"})).contains(aspettoSecondario)){
+            String temp = aspettoPrimario;
+            aspettoPrimario = aspettoSecondario;
+            aspettoSecondario = temp;
+        }
     }
 
     public Carta(WebDriver driver) {

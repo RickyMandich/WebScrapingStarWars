@@ -202,7 +202,7 @@ public class Scan {
         final String CHAT_ID = "5533337157";
         String messageId = null;
         try {
-            String urlEncodedMessage = URLEncoder.encode("live:\t" + message, StandardCharsets.UTF_8);
+            String urlEncodedMessage = URLEncoder.encode(message, StandardCharsets.UTF_8);
             String url = String.format(
                     "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s",
                     BOT_TOKEN, CHAT_ID, urlEncodedMessage
