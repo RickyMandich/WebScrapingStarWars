@@ -84,7 +84,7 @@ public class Test {
         }
         String m1 = mazzi.remove(new java.util.Random().nextInt(mazzi.size()));
         System.out.println("\n" + g1 + ":\t" + m1);
-        int m2 = mazzi.indexOf(m1);
+        int m2;
         do{
             m2 = new java.util.Random().nextInt(mazzi.size());
         }while (mazzi.get(m2).equals(m1));
@@ -95,7 +95,7 @@ public class Test {
             java.io.FileWriter writer = new java.io.FileWriter("storico.txt");
             int i = 0;
             int j = 0;
-            if(storico.length >= 15){
+            if(storico.length >= 25){
                 writer.write(storico.length + "\n");
                 i=1;
             }else{
