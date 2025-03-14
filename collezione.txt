@@ -1,11 +1,11 @@
-Bossk
-Cad Bane
 Rex
 Maul
-sabine
-Ahsoka
 Flippatine
+Poe Dameron
 Gar saxon
 Nute
 Mandaloriano
-Poe Dameron
+sabine
+Ahsoka
+Bossk
+Cad Bane

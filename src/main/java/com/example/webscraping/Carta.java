@@ -130,7 +130,13 @@ public class Carta {
                                .get("name").getAsString();
 
         try{
-            if(!aspettoPrimario.equals(aspettoSecondario) && !new ArrayList<>(List.of(new String[]{"Bianco", "nero"})).contains(aspettoSecondario)){
+            if(
+                !aspettoPrimario.equals(aspettoSecondario)
+                &&
+                !new ArrayList<>(List.of(new String[]{"Bianco", "Nero"})).contains(aspettoSecondario)
+                &&
+                !aspettoSecondario.isEmpty()
+            ){
                 String temp = aspettoPrimario;
                 aspettoPrimario = aspettoSecondario;
                 aspettoSecondario = temp;
