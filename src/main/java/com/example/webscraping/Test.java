@@ -2,10 +2,15 @@ package com.example.webscraping;
 
 public class Test {
     public static void main(String[] args) {
-        for(int i=1;i<=10;i++){
-            System.out.println("hacking NASA.... "+i+"0%");
-            try{Thread.sleep(500);}catch (InterruptedException ignore){}
+        ThreadMessage tm = new ThreadMessage();
+        for(int i=0;i<100;i++){
+            tm.addMessage(i+"", i%5==0);
+            try{
+                Thread.sleep(100);
+            }catch (InterruptedException ignore){}
         }
-        System.out.println("hacking complete");
+        tm.stats();
+        tm.start();
+        tm.finish();
     }
 }

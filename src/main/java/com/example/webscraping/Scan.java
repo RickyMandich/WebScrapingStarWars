@@ -98,9 +98,19 @@ public class Scan {
         ThreadMessage tm = new ThreadMessage();
         tm.start();
         tm.addMessage("inizio la scansione");
-        long tempo  = System.nanoTime() / 1000000000;
-        try {
-            String[] cid = new String[0];
+        long tempo;
+        tempo = System.nanoTime() / 1000000000;
+        scan(tm);
+        long tempoTrascorso;
+        tempoTrascorso = System.nanoTime() / 1000000000;
+        tempoTrascorso = tempoTrascorso - tempo;
+        System.out.println("tempo trascorso:\t" + formattaSecondi(tempoTrascorso));
+        Toolkit.getDefaultToolkit().beep();
+        tm.finish();
+    }
+
+    public static void scan(ThreadMessage tm){
+        String[] cid = new String[0];
             int page = 1;
             boolean pageFinished = false;
             while (!pageFinished) {
@@ -136,9 +146,6 @@ public class Scan {
                     tm.addMessage(i++ + ")\t" + (i<100?"\t":"") + c);
                 }
             }
-            long tempoTrascorso = System.nanoTime() / 1000000000;
-            tempoTrascorso = tempoTrascorso - tempo;
-            System.out.println("tempo trascorso:\t" + formattaSecondi(tempoTrascorso));
             boolean mancanti;
             if(carte.isEmpty()){
                 System.out.println("non ci sono nuove carte");
@@ -170,10 +177,6 @@ public class Scan {
                 }
                 collezione = elenco.getResult();
             }
-            tempoTrascorso = System.nanoTime() / 1000000000;
-            tempoTrascorso = tempoTrascorso - tempo;
-            System.out.println("tempo trascorso:\t" + formattaSecondi(tempoTrascorso));
-            Toolkit.getDefaultToolkit().beep();
             String json = json(collezione);
             try(FileWriter writer = new FileWriter("collezione.json")){
                 writer.write(json);
@@ -182,16 +185,8 @@ public class Scan {
                 scrivi(json);
             }
             uploadWithFtp("collezione.json");
-            if(mancanti) Scan.main(args);
-            else {
-                tm.addMessage("ho finito la scansione");
-            }
-        }catch (Error e){
-            tm.addMessage(e.getMessage());
-        } finally {
-            tm.finish();
-            try{tm.join();}catch (InterruptedException ignore){}
-        }
+            if(mancanti) scan(tm);
+            else tm.addMessage("ho finito la scansione", true);
     }
 
     public static String alert(String message, boolean telegram){
@@ -309,7 +304,7 @@ public class Scan {
 
         try {
             // Codificare il nuovo messaggio
-            String urlEncodedMessage = URLEncoder.encode("edit:\t" + newMessage, StandardCharsets.UTF_8);
+            String urlEncodedMessage = URLEncoder.encode(newMessage, StandardCharsets.UTF_8);
 
             // Costruire l'URL per la richiesta editMessageText
             String url = String.format(
