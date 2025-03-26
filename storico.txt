@@ -1,4 +1,4 @@
-2
+3
 0Rex
 0Flippatine
 0Poe Dameron
@@ -8,3 +8,21 @@
 1Poe Dameron
 1Rex
 1Poe Dameron
+
+2Rex
+2Maul
+2Flippatine
+2Poe Dameron
+2Mandaloriano
+2sabine
+2Ahsoka
+2Cad Bane
+2luke
+2Rex
+2Flippatine
+2Poe Dameron
+2Maul
+2Flippatine
+2Poe Dameron
+2Rex
+2Poe Dameron
