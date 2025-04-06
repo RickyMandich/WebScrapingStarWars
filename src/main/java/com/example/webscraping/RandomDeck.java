@@ -4,13 +4,14 @@ public class RandomDeck {
     public static void main(String[] args) {
         System.out.println("inserisci il nome del primo giocatore");
         String g1 = new java.util.Scanner(System.in).nextLine();
+        boolean fisico = getBoolean("vuoi giocare fisicamente? (true/false)");
         System.out.println("inserisci il nome del secondo giocatore");
         String g2 = new java.util.Scanner(System.in).nextLine();
         java.util.List<String> mazzi = new java.util.ArrayList<>();
         String line;
         if(true || getBoolean("vuoi importare tutti i mazzi memorizzati?")) {
             try {
-                java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader("collezione.txt"));
+                java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader("collezione"+(fisico?"Fisica":"")+".txt"));
                 while ((line = br.readLine()) != null) {
                     mazzi.add(line);
                 }
@@ -26,7 +27,7 @@ public class RandomDeck {
         }
         java.util.List<String>[] storico = new java.util.List[0];
         try {
-            java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader("storico.txt"));
+            java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader("storico"+(fisico?"Fisico":"")+".txt"));
             line = br.readLine();
             try{
                 storico = new java.util.List[Integer.parseInt(line)];
@@ -60,7 +61,7 @@ public class RandomDeck {
             }
         }
         try{
-            java.io.FileWriter writer = new java.io.FileWriter("collezione.txt");
+            java.io.FileWriter writer = new java.io.FileWriter("collezione"+(fisico?"Fisica":"")+".txt");
             for(String mazzo : distinctMazzi){
                 writer.write(mazzo + "\n");
             }
@@ -92,7 +93,7 @@ public class RandomDeck {
         System.out.println("ci sono " + storico.length + " storici");
 
         try{
-            java.io.FileWriter writer = new java.io.FileWriter("storico.txt");
+            java.io.FileWriter writer = new java.io.FileWriter("storico"+(fisico?"Fisica":"")+".txt");
             int i = 0;
             int j = 0;
             if(storico.length >= 25){
