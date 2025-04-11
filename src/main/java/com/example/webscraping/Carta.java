@@ -25,7 +25,8 @@ public class Carta {
     int potenza;
     String rarita;
     String artista;
-    String image;
+    String frontArt;
+    String backArt;
 
     public Carta(String cid) {
         String apiResult = apiCall(cid);
@@ -131,10 +132,10 @@ public class Carta {
                                .get("name").getAsString();
 
         //estrai link immagine
-        this.image = attributes.getAsJsonObject("artFront").getAsJsonObject("data").getAsJsonObject("attributes").getAsJsonObject("url").getAsString();
+        this.frontArt = attributes.getAsJsonObject("artFront").getAsJsonObject("data").getAsJsonObject("attributes").get("url").getAsString();
 
         if(this.tipo.equals("Leader")){
-            this.image = this.image.concat("+++" + attributes.getAsJsonObject("artBack").getAsJsonObject("data").getAsJsonObject("attributes").getAsJsonObject("url").getAsString());
+            this.backArt = attributes.getAsJsonObject("artBack").getAsJsonObject("data").getAsJsonObject("attributes").get("url").getAsString();
         }
 
         try{
@@ -305,7 +306,13 @@ public class Carta {
         if(artista != null) {
             info += "artista:\t" + artista + "\n";
         }
-        info += "url immagine:\t" + image;
+        info += "url immagine:";
+        if(tipo.equals("Leader")) {
+            info += "\n\tfronte:\t" + frontArt + "\n";
+            info += "\tretro:\t" + backArt + "\n";
+        }else{
+            info += "\tfronte:\t" + frontArt + "\n";
+        }
         info += "\n";
         return info;
     }
