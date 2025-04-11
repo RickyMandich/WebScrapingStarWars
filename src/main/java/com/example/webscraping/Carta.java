@@ -25,6 +25,7 @@ public class Carta {
     int potenza;
     String rarita;
     String artista;
+    String image;
 
     public Carta(String cid) {
         String apiResult = apiCall(cid);
@@ -101,7 +102,7 @@ public class Carta {
         this.tipo = attributes.getAsJsonObject("type")
                              .getAsJsonObject("data")
                              .getAsJsonObject("attributes")
-                             .get("name").isJsonNull() ? null : attributes.getAsJsonObject("type")
+                             .get("name").isJsonNull() ? "" : attributes.getAsJsonObject("type")
                              .getAsJsonObject("data")
                              .getAsJsonObject("attributes")
                              .get("name").getAsString();
@@ -128,6 +129,13 @@ public class Carta {
                                .getAsJsonObject("data")
                                .getAsJsonObject("attributes")
                                .get("name").getAsString();
+
+        //estrai link immagine
+        this.image = attributes.getAsJsonObject("artFront").getAsJsonObject("data").getAsJsonObject("attributes").getAsJsonObject("url").getAsString();
+
+        if(this.tipo.equals("Leader")){
+            this.image = this.image.concat("+++" + attributes.getAsJsonObject("artBack").getAsJsonObject("data").getAsJsonObject("attributes").getAsJsonObject("url").getAsString());
+        }
 
         try{
             if(
@@ -297,6 +305,8 @@ public class Carta {
         if(artista != null) {
             info += "artista:\t" + artista + "\n";
         }
+        info += "url immagine:\t" + image;
+        info += "\n";
         return info;
     }
 
