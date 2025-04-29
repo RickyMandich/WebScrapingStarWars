@@ -8,27 +8,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Carta {
-    String cid;
-    String nome;
-    String titolo;
-    boolean unica;
-    String espansione;
-    int numero;
-    String aspettoPrimario;
-    String aspettoSecondario;
-    String tipo;
-    String[] tratti;
-    String descrizione;
-    String arena;
-    int costo;
-    int vita;
-    int potenza;
-    String rarita;
-    String artista;
-    String frontArt;
-    String backArt;
+    public String cid;
+    public String nome;
+    public String titolo;
+    public boolean unica;
+    public String espansione;
+    public int numero;
+    public String aspettoPrimario;
+    public String aspettoSecondario;
+    public String tipo;
+    public String[] tratti;
+    public String descrizione;
+    public String arena;
+    public int costo;
+    public int vita;
+    public int potenza;
+    public String rarita;
+    public String artista;
+    public String frontArt;
+    public String backArt;
 
-    public Carta(String cid) {
+    public Carta(String cid,ThreadMessage tm) {
         String apiResult = apiCall(cid);
         JsonObject jsonObject = new Gson().fromJson(apiResult, JsonObject.class);
 
@@ -42,7 +42,7 @@ public class Carta {
         this.titolo = attributes.get("subtitle").isJsonNull() ? "" : attributes.get("subtitle").getAsString();
         this.unica = attributes.get("unique").isJsonNull() ? false : attributes.get("unique").getAsBoolean();
         this.numero = attributes.get("cardNumber").isJsonNull() ? 0 : attributes.get("cardNumber").getAsInt();
-        this.descrizione = attributes.get("text").isJsonNull() ? null : attributes.get("text").getAsString();
+        this.descrizione = attributes.get("textStyled").isJsonNull() ? null : attributes.get("textStyled").getAsString();
         this.costo = attributes.get("cost").isJsonNull() ? 0 : attributes.get("cost").getAsInt();
         this.vita = attributes.get("hp").isJsonNull() ? 0 : attributes.get("hp").getAsInt();
         if(!attributes.get("power").isJsonNull()) this.potenza = attributes.get("power").getAsInt();
@@ -133,9 +133,14 @@ public class Carta {
 
         //estrai link immagine
         this.frontArt = attributes.getAsJsonObject("artFront").getAsJsonObject("data").getAsJsonObject("attributes").get("url").getAsString();
+        String header = nome + " " + titolo.toUpperCase() + "(" + espansione + "-" + numero + ")\t";
+        Write.data.add(header + this.frontArt);
+
 
         if(this.tipo.equals("Leader")){
             this.backArt = attributes.getAsJsonObject("artBack").getAsJsonObject("data").getAsJsonObject("attributes").get("url").getAsString();
+            this.descrizione = this.descrizione + (attributes.get("deployBoxStyled").isJsonNull() ? null : attributes.get("deployBoxStyled").getAsString());
+            Write.data.add(header + this.backArt);
         }
 
         try{
@@ -151,6 +156,14 @@ public class Carta {
                 aspettoSecondario = temp;
             }
         }catch (java.lang.NullPointerException ignore){}
+
+        if(unica){
+            this.nome = "⟡" + this.nome;
+        }
+
+        if(this.tipo.contains("Segnalin")){
+            this.espansione = "T" + this.espansione;
+        }
     }
 
     public Carta(WebDriver driver) {
@@ -330,8 +343,11 @@ public class Carta {
         //insert another `*` on the first one to switch from the static to the dinamic input
         String cid = /**/String.valueOf(Scan.getString("inserisci il cid (Carta ID) della carta che vuoi cercare"));/*/"4179470615";/**/
         try {
-            Carta carta = new Carta(cid);
+            ThreadMessage tm = new ThreadMessage();
+            tm.start();
+            Carta carta = new Carta(cid, tm);
             System.out.println(carta);
+            tm.finish();
         }catch (Error e){
             e.printStackTrace();
         }

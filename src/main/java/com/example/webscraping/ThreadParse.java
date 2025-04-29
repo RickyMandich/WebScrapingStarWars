@@ -12,7 +12,7 @@ public class ThreadParse extends java.lang.Thread{
         while ((url = elenco.getLink(this)) != null){
             try{
                 Scan.alert(url);
-                Carta carta = new Carta(url);
+                Carta carta = new Carta(url, elenco.tm);
                 System.out.println(carta);
                 elenco.tm.addMessage("cid:\t" + carta.cid + "\ncarta: " + carta.espansione.toUpperCase() + " - " + carta.numero + " " + carta.nome + " " + carta.titolo.toUpperCase());
                 elenco.tm.addMessage(elenco.progresso());

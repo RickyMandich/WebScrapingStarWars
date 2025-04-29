@@ -106,6 +106,7 @@ public class Scan {
         tempoTrascorso = tempoTrascorso - tempo;
         System.out.println("tempo trascorso:\t" + formattaSecondi(tempoTrascorso));
         Toolkit.getDefaultToolkit().beep();
+        Write.writeData("log.txt");
         tm.finish();
     }
 
@@ -419,10 +420,6 @@ public class Scan {
     }
 
     public static String json(List<Carta> collezione) {
-        return new Gson().toJson(collezione);
-    }
-
-    public static String json(Carta[] collezione) {
         return new Gson().toJson(collezione);
     }
 
