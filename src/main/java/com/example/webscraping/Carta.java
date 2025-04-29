@@ -139,7 +139,7 @@ public class Carta {
 
         if(this.tipo.equals("Leader")){
             this.backArt = attributes.getAsJsonObject("artBack").getAsJsonObject("data").getAsJsonObject("attributes").get("url").getAsString();
-            this.descrizione = this.descrizione + (attributes.get("deployBoxStyled").isJsonNull() ? null : attributes.get("deployBoxStyled").getAsString());
+            this.descrizione = "-----NON SCHIERATO-----<br>" + this.descrizione + "-----SCHIERATO-----<br>" +(attributes.get("deployBoxStyled").isJsonNull() ? null : attributes.get("deployBoxStyled").getAsString());
             Write.data.add(header + this.backArt);
         }
 
