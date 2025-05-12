@@ -25,6 +25,7 @@ public class Carta {
     public int potenza;
     public String rarita;
     public String artista;
+    public String uscita;
     public String frontArt;
     public String backArt;
 
@@ -164,6 +165,9 @@ public class Carta {
         if(this.tipo.contains("Segnalin")){
             this.espansione = "T" + this.espansione;
         }
+
+        this.uscita = attributes.get("publishedAt").isJsonNull() ? "" : attributes.get("publishedAt").getAsString();
+        this.uscita = this.uscita.split("T")[0];
     }
 
     public Carta(WebDriver driver) {
@@ -270,7 +274,9 @@ public class Carta {
     }
 
     public static String apiCall(String cid) {
-        return Scan.apiCall("https://admin.starwarsunlimited.com/api/card/" + cid + "?locale=it");
+        String url = "https://admin.starwarsunlimited.com/api/card/" + cid + "?locale=it";
+        System.out.println(url);
+        return Scan.apiCall(url);
     }
 
     public String toString() {
