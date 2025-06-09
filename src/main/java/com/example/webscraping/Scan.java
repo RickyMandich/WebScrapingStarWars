@@ -100,7 +100,7 @@ public class Scan {
         tm.addMessage("inizio la scansione");
         long tempo;
         tempo = System.nanoTime() / 1000000000;
-        scan(tm);
+        scan(tm, true);
         long tempoTrascorso;
         tempoTrascorso = System.nanoTime() / 1000000000;
         tempoTrascorso = tempoTrascorso - tempo;
@@ -110,7 +110,7 @@ public class Scan {
         tm.finish();
     }
 
-    public static void scan(ThreadMessage tm){
+    public static void scan(ThreadMessage tm, boolean first){
         String[] cid = new String[0];
             int page = 1;
             boolean pageFinished = false;
@@ -147,6 +147,7 @@ public class Scan {
                     tm.addMessage(i++ + ")\t" + (i<100?"\t":"") + c);
                 }
             }
+            if (first)tm.addMessage("ho trovato " + carte.size() + " nuove carte da aggiungere");
             boolean mancanti;
             if(carte.isEmpty()){
                 System.out.println("non ci sono nuove carte");
@@ -186,7 +187,7 @@ public class Scan {
                 scrivi(json);
             }
             uploadWithFtp("collezione.json");
-            if(mancanti) scan(tm);
+            if(mancanti) scan(tm, false);
             else tm.addMessage("ho finito la scansione", true);
     }
 
